@@ -1,0 +1,396 @@
+/* ==========================================================================
+   Bond YTM Calculator Specific Styles
+   Bond YTM-specific colors, layouts, and components
+   Requires: cfa-base.css
+   ========================================================================== */
+
+/* ==========================================================================
+   1. BOND YTM SPECIFIC COLOR ASSIGNMENTS
+   ========================================================================== */
+:root {
+  /* Bond YTM Calculator Specific Colors */
+  --color-ytm-yield: var(--color-green-data);           /* #15803d - Yield to maturity */
+  --color-ytm-coupon: var(--color-blue-interactive);    /* #3c6ae5 - Coupon payments */
+  --color-ytm-purchase: var(--color-orange-deep);       /* #b95b1d - Bond purchase */
+  --color-ytm-principal: var(--color-orange-accent);    /* #b35b21 - Principal repayment */
+  --color-ytm-price: var(--color-blue-interactive);     /* #3c6ae5 - Bond price */
+}
+
+/* ==========================================================================
+   2. RESULT BOXES – Bond YTM Specific
+   ========================================================================== */
+.result-box.ytm-result {
+  background-color: var(--color-bg-blue);
+  border-color: var(--color-blue-interactive);
+}
+
+.result-box.bond-details {
+  background-color: var(--color-bg-teal);
+  border-color: var(--color-teal-data);
+}
+
+.result-box.price-comparison {
+  background-color: var(--color-bg-purple);
+  border-color: var(--color-purple-bold);
+}
+
+.result-title.ytm-result {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-blue-interactive);
+}
+
+.result-title.bond-details {
+  color: var(--color-teal-data);
+}
+
+.result-title.price-comparison {
+  color: var(--color-purple-bold);
+}
+
+.result-value {
+  color: var(--color-blue-interactive);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.result-value-small {
+  font-size: 0.875rem;
+  color: var(--color-gray-700);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-weight: 400;
+}
+
+.analysis-content {
+  font-size: 0.9375rem;
+  color: var(--color-gray-800);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.analysis-type {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.analysis-details {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-gray-300);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   3. INFO BOX (Bond-specific static info display)
+   ========================================================================== */
+.info-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem 1rem;
+  padding: 0.75rem;
+  background-color: var(--color-bg-blue);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-label {
+  color: var(--color-gray-700);
+}
+
+.info-value {
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   4. INPUT LAYOUT – Inline with Labels
+   ========================================================================== */
+.input-group-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem 1.5rem;
+}
+
+.input-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.input-label-inline {
+  font-size: 0.875rem;
+  color: var(--color-gray-700);
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.input-with-suffix-inline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 7rem;
+  position: relative;
+}
+
+.input-field-inline {
+  flex: 1;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.input-prefix-inline {
+  color: var(--color-gray-500);
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-right: 0.25rem;
+}
+
+.input-suffix-inline {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gray-500);
+  pointer-events: none;
+  width: 1.2rem;
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* When we have a prefix, adjust the input padding */
+.input-with-suffix-inline .input-prefix-inline ~ .input-field-inline {
+  padding-left: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .input-group-inline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .input-inline {
+    width: 100%;
+  }
+  
+  .input-with-suffix-inline {
+    width: 100%;
+    max-width: 12rem;
+  }
+  
+  .input-label-inline {
+    min-width: auto;
+  }
+}
+
+/* ==========================================================================
+   5. EQUATION DISPLAY – Bond YTM Specific
+   ========================================================================== */
+.equation-container {
+  padding: 1rem;
+  margin: 0.75rem 0;
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  container-type: inline-size;
+  container-name: equation;
+}
+
+/* Responsive equation scaling */
+@media (max-width: 768px) {
+  .equation-container math {
+    font-size: 0.95em;
+  }
+  .equation-container {
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .equation-container math {
+    font-size: 0.85em;
+  }
+  .equation-container {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .equation-container math {
+    font-size: 0.75em;
+  }
+  .equation-container {
+    padding: 0.25rem;
+  }
+}
+
+/* MathML styling */
+math {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin: 0.5rem 0;
+}
+
+/* Dynamic equation - slightly smaller */
+#dynamic-equation-container math {
+  font-size: 1rem;
+  color: var(--color-gray-700);
+}
+
+/* Dynamic equation responsive scaling */
+@media (max-width: 900px) {
+  #dynamic-equation-container math {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 768px) {
+  #dynamic-equation-container math {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 640px) {
+  #dynamic-equation-container math {
+    font-size: 0.7em;
+  }
+}
+
+@media (max-width: 480px) {
+  #dynamic-equation-container math {
+    font-size: 0.6em;
+  }
+}
+
+@media (max-width: 400px) {
+  #dynamic-equation-container math {
+    font-size: 0.55em;
+  }
+}
+
+@media (max-width: 360px) {
+  #dynamic-equation-container math {
+    font-size: 0.5em;
+  }
+}
+
+/* Container queries for zoom support */
+@container equation (max-width: 700px) {
+  #dynamic-equation-container math {
+    font-size: 0.85em;
+  }
+}
+
+@container equation (max-width: 600px) {
+  #dynamic-equation-container math {
+    font-size: 0.75em;
+  }
+}
+
+@container equation (max-width: 500px) {
+  #dynamic-equation-container math {
+    font-size: 0.65em;
+  }
+}
+
+@container equation (max-width: 400px) {
+  #dynamic-equation-container math {
+    font-size: 0.55em;
+  }
+}
+
+@container equation (max-width: 320px) {
+  #dynamic-equation-container math {
+    font-size: 0.5em;
+  }
+}
+
+math msub mtext {
+  font-size: 0.75em;
+}
+
+math mfrac {
+  margin: 0 0.2em;
+}
+
+math mo {
+  margin: 0 0.1em;
+}
+
+/* ==========================================================================
+   6. CHART ACCESSIBILITY OVERLAY
+   ========================================================================== */
+.chart-a11y-overlay .chart-point:focus-visible {
+  outline: 2px solid var(--color-blue-interactive);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   7. MODEL INFO LIST
+   ========================================================================== */
+.model-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.model-info-list li {
+  font-size: 0.8125rem;
+  color: var(--color-gray-700);
+  line-height: 1.4;
+}
+
+.model-info-list li strong {
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+/* ==========================================================================
+   RESPONSIVE TABLE - Bond YTM Specific
+   ========================================================================== */
+
+/* At very narrow widths, adjust font sizes */
+@media (max-width: 480px) {
+  .data-table {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .data-table {
+    font-size: 0.625rem;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: 0.25rem 0.3rem;
+  }
+}
