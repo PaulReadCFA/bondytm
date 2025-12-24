@@ -62,7 +62,7 @@ export function renderDynamicEquation(calculations, params) {
       </mrow>
     </math>
     <div style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; color: #374151;">
-      <div>Where: <span style="color: #b95b1d;"><strong>P₀</strong></span> = ${priceFormatted}, 
+      <div>Where: <span style="color: #b95b1d;"><strong>P<sub>0</sub></strong></span> = ${priceFormatted}, 
       <span style="color: #3c6ae5;"><strong>C</strong></span> = ${couponFormatted}, 
       <span style="color: #15803d;"><strong>y</strong></span> = ${yFormatted} (semiannual)</div>
       <div style="margin-top: 0.25rem;">Solving for y gives: <span style="color: #15803d;"><strong>YTM</strong></span> = ${ytmFormatted} (annualized)</div>

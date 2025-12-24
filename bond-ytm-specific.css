@@ -17,7 +17,29 @@
 }
 
 /* ==========================================================================
-   2. RESULT BOXES – Bond YTM Specific
+   VIEW CONTROLS - Keep buttons in fixed position
+   ========================================================================== */
+.view-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.view-controls .legend {
+  flex: 1;
+  min-height: 2rem;
+}
+
+.view-controls .button-group {
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-left: auto;
+}
+
+/* ==========================================================================
+   2. RESULT BOXES â€“ Bond YTM Specific
    ========================================================================== */
 .result-box.ytm-result {
   background-color: var(--color-bg-blue);
@@ -115,7 +137,7 @@
 }
 
 /* ==========================================================================
-   4. INPUT LAYOUT – Inline with Labels
+   4. INPUT LAYOUT â€“ Inline with Labels
    ========================================================================== */
 .input-group-inline {
   display: flex;
@@ -158,10 +180,16 @@
 }
 
 .input-prefix-inline {
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--color-gray-500);
   font-weight: 500;
   font-size: 0.875rem;
-  margin-right: 0.25rem;
+  flex-shrink: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .input-suffix-inline {
@@ -171,15 +199,25 @@
   transform: translateY(-50%);
   color: var(--color-gray-500);
   pointer-events: none;
-  width: 1.2rem;
+  width: 1.5rem;
   text-align: right;
   font-size: 0.875rem;
   font-weight: 500;
 }
 
-/* When we have a prefix, adjust the input padding */
+/* When we have a prefix, ensure proper spacing */
 .input-with-suffix-inline .input-prefix-inline ~ .input-field-inline {
   padding-left: 0.5rem;
+}
+
+/* When we have a class indicating prefix usage - needs extra padding for USD */
+.input-field-inline.input-with-prefix {
+  padding-left: 4rem;
+}
+
+/* Ensure sufficient padding on the right when suffix is present */
+.input-with-suffix-inline .input-field-inline {
+  padding-right: 2rem;
 }
 
 @media (max-width: 640px) {
@@ -204,7 +242,7 @@
 }
 
 /* ==========================================================================
-   5. EQUATION DISPLAY – Bond YTM Specific
+   5. EQUATION DISPLAY â€“ Bond YTM Specific
    ========================================================================== */
 .equation-container {
   padding: 1rem;

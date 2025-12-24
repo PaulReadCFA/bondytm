@@ -37,104 +37,7 @@
         </div>
       </section>
 
-      <!-- Cards 2 & 3: Results and Visualizer (side by side on desktop) -->
-      <div class="grid-container">
-        <!-- Card 2: Results & Analysis -->
-        <div class="grid-item-left">
-          <section class="card" id="results-card">
-            <h4 class="card-title">Results and Analysis</h4>
-            <div class="card-content">
-              <div id="results-content">
-                <!-- Populated by JavaScript -->
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <!-- Card 3: Visualizer -->
-        <div class="grid-item-right">
-          <section class="card" id="visualizer" tabindex="-1">
-            <h4 class="card-title">Bond Cash Flow and Yield Analysis</h4>
-            <div class="card-content">
-              <!-- View toggle buttons -->
-              <div class="view-controls">
-                <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
-                  <span class="legend-item" role="listitem">
-                    <span class="legend-color" style="background-color: var(--color-ytm-purchase);"></span>
-                    Bond purchase <span style="color: var(--color-ytm-purchase);">(P₀)</span>
-                  </span>
-                  <span class="legend-item" role="listitem">
-                    <span class="legend-color" style="background-color: var(--color-ytm-coupon);"></span>
-                    Coupon payments <span style="color: var(--color-ytm-coupon);">(C)</span>
-                  </span>
-                  <span class="legend-item" role="listitem">
-                    <span class="legend-color" style="background-color: var(--color-ytm-principal);"></span>
-                    Principal repayment <span style="color: var(--color-ytm-principal);">(FV)</span>
-                  </span>
-                  <span class="legend-item" role="listitem">
-                    <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed var(--color-ytm-yield); background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                    Yield to maturity <span style="color: var(--color-ytm-yield);">(YTM)</span>
-                  </span>
-                </div>
-                
-                <div class="button-group" role="group" aria-label="View mode - switch between chart and table">
-                  <button id="chart-view-btn" class="toggle-btn active" aria-pressed="true">
-                    Show Chart
-                  </button>
-                  <button id="table-view-btn" class="toggle-btn" aria-pressed="false">
-                    Show Table
-                  </button>
-                </div>
-              </div>
-
-              <!-- Screen reader announcement for view changes -->
-              <div class="sr-only" aria-live="polite" aria-atomic="true" id="view-announcement"></div>
-
-              <!-- Hidden chart description -->
-              <div class="sr-only" id="ytm-chart-desc">
-                <h4 id="ytm-chart-title">Bond cash flows and yield to maturity over time</h4>
-                <p>
-                  This chart displays the complete cash flow timeline for a bond investment.
-                  At period 0, the bond purchase price is shown as a negative cash flow (money paid out).
-                  Then, at each semiannual period, the bond pays a coupon payment shown in blue.
-                  At the final maturity date, both the last coupon payment and the principal repayment
-                  (face value, shown in orange) are received. The dashed green line shows the calculated
-                  yield to maturity (YTM) on the right axis.
-                </p>
-                <p>
-                  Keyboard navigation: Tab to focus the chart. Use Left and Right arrow keys to move between periods.
-                  Press Home to jump to the first period, or End to jump to the last period.
-                  Each period will announce its time, YTM, coupon payment, principal repayment, and total cash flow.
-                </p>
-              </div>
-
-              <!-- Chart container -->
-              <div id="chart-container" class="chart-wrapper" 
-                   role="region" 
-                   aria-labelledby="ytm-chart-title" 
-                   aria-describedby="ytm-chart-desc"
-                   tabindex="-1">
-                <canvas id="ytm-chart"></canvas>
-              </div>
-
-              <!-- Table container -->
-              <div id="table-container" class="table-wrapper" style="display: none;"
-                   role="region"  
-                   aria-label="Bond cash flow and yield table"  
-                   tabindex="-1">
-                <table id="cash-flow-table" class="data-table" aria-describedby="table-note" tabindex="0">
-                  <!-- Populated by JavaScript -->
-                </table>
-                <p id="table-note" class="table-note">
-                  Note: Values in parentheses indicate negative cash flows (outflows). Hover over values to see calculations. Press <kbd>Escape</kbd> to exit table navigation.
-                </p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <!-- Card 4: Calculator -->
+      <!-- Card 2: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
         <h4 class="card-title">Bond Yield to Maturity Calculator</h4>
         <div class="card-content">
@@ -142,7 +45,7 @@
           <div class="info-box">
             <div class="info-item">
               <span class="info-label">Face value:</span>
-              <span class="info-value">$100.00</span>
+              <span class="info-value">USD 100.00</span>
             </div>
             <div class="info-item">
               <span class="info-label">Payment frequency:</span>
@@ -159,14 +62,14 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="bond-price" class="input-label-inline">
-                  Bond price <span style="color: var(--color-ytm-purchase);">(P₀)</span>:
+                  Bond price <span style="color: var(--color-ytm-purchase);">(P<sub>0</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
-                  <span class="input-prefix-inline">$</span>
+                  <span class="input-prefix-inline">USD</span>
                   <input 
                     type="number" 
                     id="bond-price" 
-                    class="input-field-inline"
+                    class="input-field-inline input-with-prefix"
                     min="50" max="150" step="0.01" value="97.76">
                 </div>
               </div>
@@ -205,6 +108,96 @@
               <div class="validation-title">Please correct the following:</div>
               <ul id="validation-list"></ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 3: Visualizer -->
+      <section class="card" id="visualizer" tabindex="-1">
+        <h4 class="card-title">Bond Cash Flow and Yield Analysis</h4>
+        <div class="card-content">
+          <!-- View toggle buttons -->
+          <div class="view-controls">
+            <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
+              <span class="legend-item" role="listitem">
+                <span class="legend-color" style="background-color: var(--color-ytm-purchase);"></span>
+                Bond purchase <span style="color: var(--color-ytm-purchase);">(P<sub>0</sub>)</span>
+              </span>
+              <span class="legend-item" role="listitem">
+                <span class="legend-color" style="background-color: var(--color-ytm-coupon);"></span>
+                Coupon payments <span style="color: var(--color-ytm-coupon);">(C)</span>
+              </span>
+              <span class="legend-item" role="listitem">
+                <span class="legend-color" style="background-color: var(--color-ytm-principal);"></span>
+                Principal repayment <span style="color: var(--color-ytm-principal);">(FV)</span>
+              </span>
+              <span class="legend-item" role="listitem">
+                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed var(--color-ytm-yield); background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
+                Yield to maturity <span style="color: var(--color-ytm-yield);">(YTM)</span>
+              </span>
+            </div>
+            
+            <div class="button-group" role="group" aria-label="View mode - switch between chart and table">
+              <button id="chart-view-btn" class="toggle-btn active" aria-pressed="true">
+                Chart
+              </button>
+              <button id="table-view-btn" class="toggle-btn" aria-pressed="false">
+                Table
+              </button>
+            </div>
+          </div>
+
+          <!-- Screen reader announcement for view changes -->
+          <div class="sr-only" aria-live="polite" aria-atomic="true" id="view-announcement"></div>
+
+          <!-- Hidden chart description -->
+          <div class="sr-only" id="ytm-chart-desc">
+            <h4 id="ytm-chart-title">Bond cash flows and yield to maturity over time</h4>
+            <p>
+              This chart displays the complete cash flow timeline for a bond investment.
+              At period 0, the bond purchase price is shown as a negative cash flow (money paid out).
+              Then, at each semiannual period, the bond pays a coupon payment shown in blue.
+              At the final maturity date, both the last coupon payment and the principal repayment
+              (face value, shown in orange) are received. The dashed green line shows the calculated
+              yield to maturity (YTM) on the right axis.
+            </p>
+            <p>
+              Keyboard navigation: Tab to focus the chart. Use Left and Right arrow keys to move between periods.
+              Press Home to jump to the first period, or End to jump to the last period.
+              Each period will announce its time, YTM, coupon payment, principal repayment, and total cash flow.
+            </p>
+          </div>
+
+          <!-- Chart container -->
+          <div id="chart-container" class="chart-wrapper" 
+               role="region" 
+               aria-labelledby="ytm-chart-title" 
+               aria-describedby="ytm-chart-desc"
+               tabindex="-1">
+            <canvas id="ytm-chart"></canvas>
+          </div>
+
+          <!-- Table container -->
+          <div id="table-container" class="table-wrapper" style="display: none;"
+               role="region"  
+               aria-label="Bond cash flow and yield table"  
+               tabindex="-1">
+            <table id="cash-flow-table" class="data-table" aria-describedby="table-note" tabindex="0">
+              <!-- Populated by JavaScript -->
+            </table>
+            <p id="table-note" class="table-note">
+              Note: Values in parentheses indicate negative cash flows (outflows). Hover over values to see calculations. Press <kbd>Escape</kbd> to exit table navigation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card 4: Results & Analysis -->
+      <section class="card" id="results-card">
+        <h4 class="card-title">Results and Analysis</h4>
+        <div class="card-content">
+          <div id="results-content">
+            <!-- Populated by JavaScript -->
           </div>
         </div>
       </section>

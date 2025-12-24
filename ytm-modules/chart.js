@@ -11,7 +11,8 @@ const COLORS = {
   principal: '#b35b21',   // Orange - matches --color-ytm-principal
   purchase: '#b95b1d',    // Orange - matches --color-ytm-purchase
   yield: '#15803d',       // Green - matches --color-ytm-yield
-  darkText: '#06005a'
+  darkText: '#06005a',
+  axisColor: '#374151'    // Darker gray for axes
 };
 
 let chartInstance = null;
@@ -169,7 +170,17 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         x: {
           title: {
             display: true,
-            text: 'Years'
+            text: 'Years',
+            color: COLORS.axisColor,
+            font: {
+              weight: 600
+            }
+          },
+          ticks: {
+            color: COLORS.axisColor,
+            font: {
+              weight: 500
+            }
           },
           grid: {
             display: false
@@ -178,16 +189,28 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         y: {
           title: {
             display: true,
-            text: 'Cash Flows ($)'
+            text: 'Cash Flows (USD)',
+            color: COLORS.axisColor,
+            font: {
+              weight: 600
+            }
           },
           position: 'left',
           ticks: {
             callback: function(value) {
-              return formatCurrency(value);
+              // Return just the number without USD
+              return value.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              });
             },
             autoSkip: true,
             maxRotation: 0,
-            minRotation: 0
+            minRotation: 0,
+            color: COLORS.axisColor,
+            font: {
+              weight: 500
+            }
           },
           grid: {
             color: 'rgba(0, 0, 0, 0.05)'
@@ -195,19 +218,28 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         },
         y2: {
           title: {
-            display: false
+            display: true,
+            text: 'Yield (%)',
+            color: COLORS.yield,
+            font: {
+              weight: 600
+            }
           },
           position: 'right',
           min: 0,
           max: ytmBEY ? Math.max(15, (ytmBEY * 100) * 1.3) : 15,
           ticks: {
             callback: function(value) {
-              return formatPercentage(value, 1);
+              // Return just the number without %
+              return value.toFixed(1);
             },
             color: COLORS.yield,
             autoSkip: true,
             maxRotation: 0,
-            minRotation: 0
+            minRotation: 0,
+            font: {
+              weight: 600
+            }
           },
           grid: {
             display: false
@@ -224,24 +256,6 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
       }
     },
     plugins: [{
-      id: 'horizontalY2Title',
-      afterDraw: (chart) => {
-        const ctx = chart.ctx;
-        const chartArea = chart.chartArea;
-        
-        ctx.save();
-        ctx.fillStyle = COLORS.yield;
-        const fontSize = Math.max(11, Math.min(14, chartArea.width / 50));
-        ctx.font = `bold ${fontSize}px sans-serif`;
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'top';
-        
-        ctx.fillText('Yield (%)', chartArea.right, chartArea.top - 25);
-        
-        ctx.restore();
-      }
-    },
-    {
       id: 'stackedBarLabels',
       afterDatasetsDraw: (chart) => {
         if (!showLabels) return;

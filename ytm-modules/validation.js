@@ -14,7 +14,7 @@ const VALIDATION_RULES = {
     max: 150,
     required: true,
     label: 'Bond price',
-    prefix: '$'
+    prefix: 'USD '
   },
   couponRate: {
     min: 0,
