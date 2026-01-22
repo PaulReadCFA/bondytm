@@ -10,24 +10,28 @@ import { $ } from './utils.js';
  */
 const VALIDATION_RULES = {
   bondPrice: {
-    min: 50,
-    max: 150,
+    min: 10,
+    max: 200,
     required: true,
     label: 'Bond price',
-    prefix: 'USD '
+    prefix: 'USD ',
+    helpText: 'Enter a bond price between USD 10 and USD 200'
   },
   couponRate: {
     min: 0,
-    max: 20,
+    max: 30,
     required: true,
     label: 'Coupon rate',
-    unit: '%'
+    unit: '%',
+    helpText: 'Enter an annual coupon rate between 0% and 30%'
   },
   years: {
     min: 0.5,
-    max: 10,
+    max: 30,
+    step: 0.5,
     required: true,
-    label: 'Years to maturity'
+    label: 'Years to maturity',
+    helpText: 'Enter years to maturity between 0.5 and 30 years'
   }
 };
 
@@ -41,10 +45,20 @@ export function validateField(field, value) {
   const rules = VALIDATION_RULES[field];
   if (!rules) return null;
   
+  // Check if required
   if (rules.required && (value === '' || value == null || isNaN(value))) {
-    return `${rules.label} is required`;
+    return `${rules.label} is required. ${rules.helpText}`;
   }
   
+  // Check step for years (must be 0.5 increments)
+  if (field === 'years' && rules.step) {
+    const remainder = (value % rules.step).toFixed(2);
+    if (parseFloat(remainder) !== 0) {
+      return `${rules.label} must be in increments of ${rules.step} years (e.g., 0.5, 1.0, 1.5, 2.0...)`;
+    }
+  }
+  
+  // Check min/max
   if (rules.min !== undefined && value < rules.min) {
     const minDisplay = rules.prefix ? `${rules.prefix}${rules.min}` : `${rules.min}${rules.unit || ''}`;
     const maxDisplay = rules.prefix ? `${rules.prefix}${rules.max}` : `${rules.max}${rules.unit || ''}`;

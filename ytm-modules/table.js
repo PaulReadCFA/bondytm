@@ -24,16 +24,16 @@ export function renderTable(cashFlows, ytmBEY) {
   let html = `
     <caption class="sr-only">
       Bond cash flow schedule showing period, time in years, yield to maturity, coupon payments,
-      principal repayment, and total cash flows. Note: Values in parentheses indicate negative cash flows.
+      face value, and total cash flows. Note: Values in parentheses indicate negative cash flows.
     </caption>
 
     <thead>
       <tr>
         <th scope="col" class="text-left">Period</th>
         <th scope="col" class="text-left">Time (Years)</th>
-        <th scope="col" class="text-right">YTM <span style="color: #7a46ff;">(annual)</span></th>
-        <th scope="col" class="text-right">Coupon <span style="color: #3c6ae5;">(C)</span></th>
-        <th scope="col" class="text-right">Principal <span style="color: #0079a6;">(FV)</span></th>
+        <th scope="col" class="text-right">YTM <span style="color: #7a46ff;">(<i>r</i>)</span></th>
+        <th scope="col" class="text-right">Coupon Payment</th>
+        <th scope="col" class="text-right">Face Value <span style="color: #0079a6;">(FV)</span></th>
         <th scope="col" class="text-right">Total Cash Flow</th>
       </tr>
     </thead>

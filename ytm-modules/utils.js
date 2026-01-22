@@ -40,7 +40,7 @@ export function debounce(fn, wait = 300) {
 /**
  * Format number as currency
  * @param {number} value - Numeric value
- * @param {boolean} signed - Include sign for negative values
+ * @param {boolean} signed - Include sign for negative values (ignored, always uses minus)
  * @returns {string} Formatted currency string
  */
 export function formatCurrency(value, signed = false) {
@@ -51,7 +51,7 @@ export function formatCurrency(value, signed = false) {
   });
   
   if (value < 0) {
-    return signed ? `-USD ${formatted}` : `(USD ${formatted})`;
+    return `−USD ${formatted}`;
   }
   return `USD ${formatted}`;
 }

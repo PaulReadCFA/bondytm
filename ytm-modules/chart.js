@@ -91,7 +91,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         },
         // YTM horizontal line
         ...(ytmBEY !== null ? [{
-          label: 'Yield to maturity (YTM)',
+          label: 'Yield to maturity (r)',
           data: labels.map(() => ytmBEY * 100),
           type: 'line',
           borderColor: COLORS.yield,
@@ -139,19 +139,19 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
               const index = context.dataIndex;
               const isInitialPeriod = index === 0;
               
-              if (context.dataset.label === 'Yield to maturity (YTM)') {
-                return `YTM: ${formatPercentage(value)}`;
+              if (context.dataset.label === 'Yield to maturity (r)') {
+                return `Yield to maturity (r): ${formatPercentage(value)}`;
               }
               
               if (isInitialPeriod && context.dataset.label === 'Principal/Purchase') {
-                return `Bond purchase (P₀): ${formatCurrency(value, true)}`;
+                return `Bond price (PV): ${formatCurrency(value, true)}`;
               }
               
               if (context.dataset.label === 'Principal/Purchase' && value > 0) {
-                return `Principal repayment (FV): ${formatCurrency(value, true)}`;
+                return `Face value (FV): ${formatCurrency(value, true)}`;
               }
               if (context.dataset.label === 'Coupon payments') {
-                return `Coupon payment (C): ${formatCurrency(value, true)}`;
+                return `Coupon payment: ${formatCurrency(value, true)}`;
               }
               
               return `${context.dataset.label}: ${formatCurrency(value, true)}`;
@@ -159,7 +159,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             footer: (context) => {
               const index = context[0].dataIndex;
               const total = totalData[index];
-              if (context[0].dataset.label !== 'Yield to maturity (YTM)') {
+              if (context[0].dataset.label !== 'Yield-to-maturity (r)') {
                 return `Total: ${formatCurrency(total, true)}`;
               }
               return '';
@@ -220,7 +220,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         y2: {
           title: {
             display: true,
-            text: 'Yield (%)',
+            text: 'Yield-to-maturity (%)',
             color: COLORS.yield,
             font: {
               weight: 600
@@ -352,6 +352,36 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         ctx.strokeRect(x, y, width, height);
         ctx.restore();
       }
+    },
+    {
+      id: 'ytmLineLabel',
+      afterDatasetsDraw: (chart) => {
+        if (!ytmBEY) return;
+        
+        const ctx = chart.ctx;
+        const meta = chart.getDatasetMeta(2); // YTM line is dataset index 2
+        
+        if (!meta || !meta.data || meta.data.length === 0) return;
+        
+        ctx.save();
+        ctx.fillStyle = COLORS.yield;
+        ctx.font = 'italic bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        
+        // Position label in the middle of the line, above it
+        const middleIndex = Math.floor(meta.data.length / 2);
+        const middlePoint = meta.data[middleIndex];
+        
+        if (middlePoint) {
+          const x = middlePoint.x;
+          const y = middlePoint.y - 8; // 8px above the line
+          // Display the actual YTM value instead of just "r"
+          ctx.fillText(`r = ${formatPercentage(ytmBEY * 100)}`, x, y);
+        }
+        
+        ctx.restore();
+      }
     }]
   });
   
@@ -468,11 +498,11 @@ function announceDataPoint(cashFlow, total, ytmBEY) {
   }
   
   const isInitialPeriod = cashFlow.period === 0;
-  const principalLabel = isInitialPeriod ? 'Bond purchase (P₀)' : 'Principal repayment (FV)';
+  const principalLabel = isInitialPeriod ? 'Bond price (PV)' : 'Face value (FV)';
   
   const announcement = `Time ${cashFlow.timeYears.toFixed(1)} years. ` +
-    `Yield to maturity: ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
-    `Coupon payment (C): ${formatCurrency(cashFlow.couponPayment, true)}. ` +
+    `Yield to maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
+    `Coupon payment: ${formatCurrency(cashFlow.couponPayment, true)}. ` +
     `${principalLabel}: ${formatCurrency(cashFlow.principalPayment, true)}. ` +
     `Total: ${formatCurrency(total, true)}.`;
   

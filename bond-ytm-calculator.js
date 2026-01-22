@@ -66,26 +66,36 @@ function init() {
  * Set up skip link handlers for accessibility
  */
 function setupSkipLinks() {
-  const skipToVisualizer = document.querySelector('a[href="#visualizer"]');
+  const skipToDataEntry = document.querySelector('a[href="#bond-price"]');
+  const skipToDataTable = document.querySelector('a[href="#cash-flow-table"]');
   
-  if (skipToVisualizer) {
-    listen(skipToVisualizer, 'click', (e) => {
+  if (skipToDataEntry) {
+    listen(skipToDataEntry, 'click', (e) => {
+      e.preventDefault();
+      
+      // Focus the first input field directly
+      const firstInput = $('#bond-price');
+      if (firstInput) {
+        firstInput.focus();
+        // Scroll into view
+        firstInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+  
+  if (skipToDataTable) {
+    listen(skipToDataTable, 'click', (e) => {
       e.preventDefault();
       
       // Switch to table view
       switchView('table');
-      
-      // Scroll the section into view
-      const section = $('#visualizer');
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
       
       // Focus the table after switching
       setTimeout(() => {
         const table = $('#cash-flow-table');
         if (table) {
           table.focus();
+          table.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 400);
     });
@@ -192,8 +202,110 @@ function setupViewToggle() {
     return;
   }
   
-  listen(chartBtn, 'click', () => switchView('chart'));
+  // Chart button - use addEventListener directly with capture phase
+  if (chartBtn) {
+    chartBtn.addEventListener('click', (e) => {
+      // FIRST: Check if narrow screen before anything else
+      const isForced = document.body.classList.contains('force-table');
+      
+      if (isForced || chartBtn.disabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        console.log('Chart button blocked - narrow screen detected');
+        
+        // Visual feedback: briefly highlight table button
+        if (tableBtn) {
+          tableBtn.style.transition = 'transform 0.2s ease';
+          tableBtn.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            tableBtn.style.transform = 'scale(1)';
+          }, 200);
+        }
+        
+        // Force table view
+        switchView('table');
+        
+        return false;
+      }
+      
+      // Normal behavior - allow chart view
+      switchView('chart');
+    }, true); // Use capture phase
+  }
+  
   listen(tableBtn, 'click', () => switchView('table'));
+  
+  // Add arrow key navigation for toggle buttons
+  const handleArrowKeys = (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const isForced = document.body.classList.contains('force-table');
+      
+      if (e.key === 'ArrowRight') {
+        // Right arrow: switch to table view
+        switchViewWithoutFocus('table');
+        // Keep focus on table button
+        setTimeout(() => tableBtn.focus(), 0);
+      } else if (e.key === 'ArrowLeft' && !isForced && !chartBtn.disabled) {
+        // Left arrow: switch to chart view (if allowed)
+        switchViewWithoutFocus('chart');
+        // Keep focus on chart button
+        setTimeout(() => chartBtn.focus(), 0);
+      }
+    }
+  };
+  
+  chartBtn.addEventListener('keydown', handleArrowKeys);
+  tableBtn.addEventListener('keydown', handleArrowKeys);
+}
+
+/**
+ * Switch view without moving focus to content (for arrow key navigation)
+ * @param {string} view - 'chart' or 'table'
+ */
+function switchViewWithoutFocus(view) {
+  const chartBtn = $('#chart-view-btn');
+  const tableBtn = $('#table-view-btn');
+  const chartContainer = $('#chart-container');
+  const tableContainer = $('#table-container');
+  const legend = $('#chart-legend');
+  
+  // Update state
+  setState({ viewMode: view });
+  
+  // Update button states
+  if (view === 'chart') {
+    chartBtn.classList.add('active');
+    chartBtn.setAttribute('aria-pressed', 'true');
+    tableBtn.classList.remove('active');
+    tableBtn.setAttribute('aria-pressed', 'false');
+    
+    // Show chart, hide table
+    chartContainer.style.display = 'block';
+    tableContainer.style.display = 'none';
+    legend.style.display = 'flex';
+    
+    // Announce change
+    announceToScreenReader('Chart view active');
+    
+  } else {
+    tableBtn.classList.add('active');
+    tableBtn.setAttribute('aria-pressed', 'true');
+    chartBtn.classList.remove('active');
+    chartBtn.setAttribute('aria-pressed', 'false');
+    
+    // Show table, hide chart
+    tableContainer.style.display = 'block';
+    chartContainer.style.display = 'none';
+    legend.style.display = 'none';
+    
+    // Announce change
+    announceToScreenReader('Table view active');
+  }
 }
 
 /**
@@ -334,9 +446,14 @@ function handleResponsiveView() {
   const chartBtn = $('#chart-view-btn');
   const tableBtn = $('#table-view-btn');
   const viewportWidth = window.innerWidth;
+  const body = document.body;
   
-  // At very narrow widths (< 600px), force table view and disable chart button
-  if (viewportWidth < 600) {
+  // At very narrow widths (<= 480px), force table view and disable chart button
+  if (viewportWidth <= 480) {
+    console.log('Narrow screen detected, forcing table view');
+    
+    body.classList.add('force-table');
+    
     if (state.viewMode === 'chart') {
       switchView('table');
     }
@@ -345,19 +462,18 @@ function handleResponsiveView() {
     if (chartBtn) {
       chartBtn.disabled = true;
       chartBtn.setAttribute('aria-disabled', 'true');
-      chartBtn.title = 'Chart view not available at this screen size';
     }
     if (tableBtn) {
       tableBtn.disabled = false;
       tableBtn.removeAttribute('aria-disabled');
-      tableBtn.title = '';
     }
   } else {
     // Re-enable chart button at wider widths
+    body.classList.remove('force-table');
+    
     if (chartBtn) {
       chartBtn.disabled = false;
       chartBtn.removeAttribute('aria-disabled');
-      chartBtn.title = '';
     }
   }
 }
@@ -397,25 +513,25 @@ function runSelfTests() {
       if (test.expected.ytmApprox !== undefined) {
         const diff = Math.abs(result.bondEquivalentYield - test.expected.ytmApprox);
         if (diff <= 0.0001) {
-          console.log(`✓ ${test.name} passed`);
+          console.log(`âœ“ ${test.name} passed`);
         } else {
-          console.warn(`✗ ${test.name} failed: expected ~${test.expected.ytmApprox}, got ${result.bondEquivalentYield}`);
+          console.warn(`âœ— ${test.name} failed: expected ~${test.expected.ytmApprox}, got ${result.bondEquivalentYield}`);
         }
       } else if (test.expected.ytmShouldBe === 'greater than 0.06') {
         if (result.bondEquivalentYield > 0.06) {
-          console.log(`✓ ${test.name} passed`);
+          console.log(`âœ“ ${test.name} passed`);
         } else {
-          console.warn(`✗ ${test.name} failed: YTM should be > 0.06, got ${result.bondEquivalentYield}`);
+          console.warn(`âœ— ${test.name} failed: YTM should be > 0.06, got ${result.bondEquivalentYield}`);
         }
       } else if (test.expected.ytmShouldBe === 'less than 0.06') {
         if (result.bondEquivalentYield < 0.06) {
-          console.log(`✓ ${test.name} passed`);
+          console.log(`âœ“ ${test.name} passed`);
         } else {
-          console.warn(`✗ ${test.name} failed: YTM should be < 0.06, got ${result.bondEquivalentYield}`);
+          console.warn(`âœ— ${test.name} failed: YTM should be < 0.06, got ${result.bondEquivalentYield}`);
         }
       }
     } catch (error) {
-      console.error(`✗ ${test.name} threw error:`, error);
+      console.error(`âœ— ${test.name} threw error:`, error);
     }
   });
   

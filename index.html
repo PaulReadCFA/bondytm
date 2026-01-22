@@ -10,6 +10,26 @@
   <link rel="stylesheet" href="cfa-base.css">
   <link rel="stylesheet" href="bond-ytm-specific.css">
   
+  <!-- MathJax for MathML rendering -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      MathML: {
+        extensions: ["content-mathml.js"]
+      },
+      showProcessingMessages: false,
+      messageStyle: "none"
+    });
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
+  <script>
+    // Ensure MathJax re-renders when content changes
+    if (typeof MathJax !== 'undefined') {
+      window.addEventListener('load', function() {
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      });
+    }
+  </script>
+  
   <!-- Chart.js for visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -17,16 +37,108 @@
   <div class="container">
     <!-- Skip Links for Accessibility -->
     <nav role="navigation" aria-label="Skip links">
-      <a href="#calculator" class="skip-link">Skip to calculator</a>
-      <a href="#visualizer" class="skip-link">Skip to data table</a>
+      <a href="#bond-price" class="skip-link">Skip to data entry</a>
+      <a href="#cash-flow-table" class="skip-link">Skip to data table</a>
     </nav>
     
     <main class="content">
+      <!-- Card 0: Static Bond Valuation Equations -->
+      <section id="static-equation-card" class="card">
+        <h4 class="card-title">Bond Valuation Equations</h4>
+        <p class="equation-intro">
+          The general bond valuation equation with annual coupon payments:
+        </p>
+        
+        <div class="equation-container" role="region" aria-label="General bond valuation equation">
+          <div class="equation-math-wrapper">
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+              <mrow>
+                <msub>
+                  <mi mathvariant="bold" mathcolor="#b95b1d">PV</mi>
+                  <mtext mathcolor="#b95b1d">Coupon bond</mtext>
+                </msub>
+                <mo>=</mo>
+                <mfrac linethickness="1.2px">
+                  <mi mathvariant="bold" mathcolor="#3c6ae5">PMT</mi>
+                  <mi mathcolor="#7a46ff">r</mi>
+                </mfrac>
+                <mo>×</mo>
+                <mrow>
+                  <mo>[</mo>
+                  <mn>1</mn>
+                  <mo>−</mo>
+                  <mfrac linethickness="1.2px">
+                    <mn>1</mn>
+                    <msup>
+                      <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+                      <mi mathcolor="#15803d">T</mi>
+                    </msup>
+                  </mfrac>
+                  <mo>]</mo>
+                </mrow>
+                <mo>+</mo>
+                <mfrac linethickness="1.2px">
+                  <mi mathvariant="bold" mathcolor="#0079a6">FV</mi>
+                  <msup>
+                    <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+                    <mi mathcolor="#15803d">T</mi>
+                  </msup>
+                </mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+        
+        <p class="equation-intro" style="margin-top: 1.5rem;">
+          Assuming that PMT and r are annual values and that a bond pays coupons semi-annually, we can modify this expression as follows:
+        </p>
+        
+        <div class="equation-container" role="region" aria-label="Semi-annual bond valuation equation">
+          <div class="equation-math-wrapper">
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+              <mrow>
+                <msub>
+                  <mi mathvariant="bold" mathcolor="#b95b1d">PV</mi>
+                  <mtext mathcolor="#b95b1d">Coupon bond</mtext>
+                </msub>
+                <mo>=</mo>
+                <mfrac linethickness="1.2px">
+                  <mi mathvariant="bold" mathcolor="#3c6ae5">PMT</mi>
+                  <mi mathcolor="#7a46ff">r</mi>
+                </mfrac>
+                <mo>×</mo>
+                <mrow>
+                  <mo>[</mo>
+                  <mn>1</mn>
+                  <mo>−</mo>
+                  <mfrac linethickness="1.2px">
+                    <mn>1</mn>
+                    <msup>
+                      <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>/</mo><mn>2</mn><mo>)</mo></mrow>
+                      <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
+                    </msup>
+                  </mfrac>
+                  <mo>]</mo>
+                </mrow>
+                <mo>+</mo>
+                <mfrac linethickness="1.2px">
+                  <mi mathvariant="bold" mathcolor="#0079a6">FV</mi>
+                  <msup>
+                    <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>/</mo><mn>2</mn><mo>)</mo></mrow>
+                    <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
+                  </msup>
+                </mfrac>
+              </mrow>
+            </math>
+          </div>
+        </div>
+      </section>
+      
       <!-- Card 1: Equation -->
       <section id="equation-card" class="card">
-        <h4 class="card-title">Bond Yield to Maturity Equation</h4>
+        <h4 class="card-title">Bond Yield to Maturity Calculation</h4>
         <p class="equation-intro">
-          This equation calculates the yield-to-maturity or internal (implied) rate of return (r) that equates the present value of cash flows to the bond price.
+          This equation calculates the yield to maturity (r) that equates the present value of cash flows to the bond price, using the semi-annual formulation:
         </p>
         
         <!-- Dynamic equation with actual values -->
@@ -62,7 +174,7 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="bond-price" class="input-label-inline">
-                  Bond price <span style="color: #b95b1d;">(P<sub>0</sub>)</span>:
+                  Bond price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -70,21 +182,25 @@
                     type="number" 
                     id="bond-price" 
                     class="input-field-inline input-with-prefix"
-                    min="50" max="150" step="0.01" value="97.76">
+                    min="10" max="200" step="1" value="97.76"
+                    aria-describedby="bond-price-help">
+                  <span class="sr-only" id="bond-price-help">Enter a bond price between USD 10 and USD 200</span>
                 </div>
               </div>
 
               <div class="input-inline">
                 <label for="coupon-rate" class="input-label-inline">
-                  Coupon rate <span style="color: #3c6ae5;">(c)</span>:
+                  Coupon rate <span style="color: #3c6ae5;">(annual)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
                     type="number" 
                     id="coupon-rate" 
                     class="input-field-inline"
-                    min="0" max="20" step="0.1" value="11.0088">
+                    min="0" max="30" step="0.1" value="11.0088"
+                    aria-describedby="coupon-rate-help">
                   <span class="input-suffix-inline">%</span>
+                  <span class="sr-only" id="coupon-rate-help">Enter an annual coupon rate between 0% and 30%</span>
                 </div>
               </div>
 
@@ -97,8 +213,10 @@
                     type="number" 
                     id="years" 
                     class="input-field-inline"
-                    min="0.5" max="10" step="0.5" value="5">
+                    min="0.5" max="30" step="0.5" value="5"
+                    aria-describedby="years-help">
                   <span class="input-suffix-inline">&nbsp;</span>
+                  <span class="sr-only" id="years-help">Enter years to maturity between 0.5 and 30 years, in 0.5 year increments</span>
                 </div>
               </div>
             </div>
@@ -121,19 +239,19 @@
             <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #b95b1d;"></span>
-                Bond purchase <span style="color: #b95b1d;">(P<sub>0</sub>)</span>
+                Bond price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                Coupon payments <span style="color: #3c6ae5;">(C)</span>
+                Coupon payments
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #0079a6;"></span>
-                Principal repayment <span style="color: #0079a6;">(FV)</span>
+                Face value <span style="color: #0079a6;">(FV)</span>
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Yield to maturity <span style="color: #7a46ff;">(r)</span>
+                Yield to maturity <span style="color: #7a46ff;">(<i>r</i>)</span>
               </span>
             </div>
             
@@ -177,21 +295,15 @@
                style="overflow: visible;">
             <canvas id="ytm-chart"></canvas>
           </div>
-          <p class="chart-note">
-            Note: Values in parentheses indicate negative cash flows (outflows).
-          </p>
 
           <!-- Table container -->
           <div id="table-container" class="table-wrapper" style="display: none;"
                role="region"  
                aria-label="Bond cash flow and yield table"  
                tabindex="-1">
-            <table id="cash-flow-table" class="data-table" aria-describedby="table-note">
+            <table id="cash-flow-table" class="data-table" role="table" aria-label="Bond cash flow table" tabindex="0">
               <!-- Populated by JavaScript -->
             </table>
-            <p id="table-note" class="table-note">
-              Note: Values in parentheses indicate negative cash flows (outflows).
-            </p>
           </div>
         </div>
       </section>
