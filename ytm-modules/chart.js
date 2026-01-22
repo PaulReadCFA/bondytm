@@ -5,12 +5,13 @@
 
 import { formatCurrency, formatPercentage } from './utils.js';
 
-// Bond YTM Colors
+// Bond YTM Colors - Aligned with EE01
 const COLORS = {
-  coupon: '#3c6ae5',      // Blue - matches --color-ytm-coupon
-  principal: '#b35b21',   // Orange - matches --color-ytm-principal
-  purchase: '#b95b1d',    // Orange - matches --color-ytm-purchase
-  yield: '#15803d',       // Green - matches --color-ytm-yield
+  coupon: '#3c6ae5',      // Blue - PMT (coupon payments)
+  principal: '#0079a6',   // Teal - FV (face value/principal)
+  purchase: '#b95b1d',    // Orange - PV (bond purchase)
+  yield: '#7a46ff',       // Purple - r (yield/rate)
+  time: '#15803d',        // Green - T (time)
   darkText: '#06005a',
   axisColor: '#374151'    // Darker gray for axes
 };
@@ -250,7 +251,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         padding: {
           left: 10,
           right: 10,
-          top: showLabels ? 35 : 15,
+          top: showLabels ? 45 : 15,
           bottom: 10
         }
       }
@@ -262,42 +263,59 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         
         const ctx = chart.ctx;
         ctx.save();
-        ctx.font = 'bold 11px sans-serif';
-        ctx.fillStyle = COLORS.darkText;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
         
         const meta0 = chart.getDatasetMeta(0);
         const meta1 = chart.getDatasetMeta(1);
         
-        let maxPositiveY = chart.scales.y.top;
-        chart.data.labels.forEach((label, index) => {
-          const total = totalData[index];
-          if (total > 0 && meta0.data[index] && meta1.data[index]) {
-            const topY = Math.min(meta0.data[index].y, meta1.data[index].y);
-            maxPositiveY = Math.max(maxPositiveY, topY);
-          }
-        });
+        // Find the top of the FV bar (last period) for label positioning
+        const lastIndex = cashFlows.length - 1;
+        let labelY = chart.scales.y.top;
+        
+        if (meta0.data[lastIndex] && meta1.data[lastIndex]) {
+          // Get the top of the FV bar
+          const fvBarTop = Math.min(meta0.data[lastIndex].y, meta1.data[lastIndex].y);
+          // Position labels 25 pixels above the FV bar
+          labelY = fvBarTop - 25;
+        }
         
         chart.data.labels.forEach((label, index) => {
           const total = totalData[index];
-          if (Math.abs(total) < 0.01) return;
+          const cf = cashFlows[index];
           
           if (!meta0.data[index] || !meta1.data[index]) return;
           
           const bar0 = meta0.data[index];
           const bar1 = meta1.data[index];
-          
           const x = bar1.x;
-          let y;
           
-          if (total < 0) {
-            y = maxPositiveY - 5;
-          } else {
-            y = Math.min(bar0.y, bar1.y) - 5;
+          // For period 0 (PV) and final period (FV), show white text on bars
+          if (index === 0) {
+            // PV - white text on orange bar
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const barMidY = (bar0.y + bar0.base) / 2;
+            ctx.fillText('PV', x, barMidY);
+          } else if (index === cashFlows.length - 1) {
+            // FV - white text on teal bar
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const barMidY = (bar0.y + bar0.base) / 2;
+            ctx.fillText('FV', x, barMidY);
           }
           
-          ctx.fillText(formatCurrency(total, false), x, y);
+          // Show value labels above all bars (aligned at same height, above FV bar)
+          if (Math.abs(total) >= 0.01) {
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillStyle = COLORS.darkText;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            
+            ctx.fillText(formatCurrency(total, false), x, labelY);
+          }
         });
         
         ctx.restore();

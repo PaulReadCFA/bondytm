@@ -26,7 +26,7 @@
       <section id="equation-card" class="card">
         <h4 class="card-title">Bond Yield to Maturity Equation</h4>
         <p class="equation-intro">
-          This equation calculates the internal rate of return (YTM) that equates the present value of cash flows to the bond price.
+          This equation calculates the yield-to-maturity or internal (implied) rate of return (r) that equates the present value of cash flows to the bond price.
         </p>
         
         <!-- Dynamic equation with actual values -->
@@ -62,7 +62,7 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="bond-price" class="input-label-inline">
-                  Bond price <span style="color: var(--color-ytm-purchase);">(P<sub>0</sub>)</span>:
+                  Bond price <span style="color: #b95b1d;">(P<sub>0</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -76,21 +76,21 @@
 
               <div class="input-inline">
                 <label for="coupon-rate" class="input-label-inline">
-                  Coupon rate <span style="color: var(--color-ytm-coupon);">(c)</span>:
+                  Coupon rate <span style="color: #3c6ae5;">(c)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
                     type="number" 
                     id="coupon-rate" 
                     class="input-field-inline"
-                    min="0" max="20" step="0.01" value="11.0088">
+                    min="0" max="20" step="0.1" value="11.0088">
                   <span class="input-suffix-inline">%</span>
                 </div>
               </div>
 
               <div class="input-inline">
                 <label for="years" class="input-label-inline">
-                  Years to maturity <span style="color: var(--color-green-data);">(T)</span>:
+                  Years to maturity <span style="color: #15803d;">(T)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
@@ -120,20 +120,20 @@
           <div class="view-controls">
             <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
               <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: var(--color-ytm-purchase);"></span>
-                Bond purchase <span style="color: var(--color-ytm-purchase);">(P<sub>0</sub>)</span>
+                <span class="legend-color" style="background-color: #b95b1d;"></span>
+                Bond purchase <span style="color: #b95b1d;">(P<sub>0</sub>)</span>
               </span>
               <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: var(--color-ytm-coupon);"></span>
-                Coupon payments <span style="color: var(--color-ytm-coupon);">(C)</span>
+                <span class="legend-color" style="background-color: #3c6ae5;"></span>
+                Coupon payments <span style="color: #3c6ae5;">(C)</span>
               </span>
               <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: var(--color-ytm-principal);"></span>
-                Principal repayment <span style="color: var(--color-ytm-principal);">(FV)</span>
+                <span class="legend-color" style="background-color: #0079a6;"></span>
+                Principal repayment <span style="color: #0079a6;">(FV)</span>
               </span>
               <span class="legend-item" role="listitem">
-                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed var(--color-ytm-yield); background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Yield to maturity <span style="color: var(--color-ytm-yield);">(YTM)</span>
+                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
+                Yield to maturity <span style="color: #7a46ff;">(r)</span>
               </span>
             </div>
             
@@ -173,20 +173,24 @@
                role="region" 
                aria-labelledby="ytm-chart-title" 
                aria-describedby="ytm-chart-desc"
-               tabindex="-1">
+               tabindex="-1"
+               style="overflow: visible;">
             <canvas id="ytm-chart"></canvas>
           </div>
+          <p class="chart-note">
+            Note: Values in parentheses indicate negative cash flows (outflows).
+          </p>
 
           <!-- Table container -->
           <div id="table-container" class="table-wrapper" style="display: none;"
                role="region"  
                aria-label="Bond cash flow and yield table"  
                tabindex="-1">
-            <table id="cash-flow-table" class="data-table" aria-describedby="table-note" tabindex="0">
+            <table id="cash-flow-table" class="data-table" aria-describedby="table-note">
               <!-- Populated by JavaScript -->
             </table>
             <p id="table-note" class="table-note">
-              Note: Values in parentheses indicate negative cash flows (outflows). Hover over values to see calculations. Press <kbd>Escape</kbd> to exit table navigation.
+              Note: Values in parentheses indicate negative cash flows (outflows).
             </p>
           </div>
         </div>

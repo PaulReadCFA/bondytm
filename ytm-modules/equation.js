@@ -32,40 +32,42 @@ export function renderDynamicEquation(calculations, params) {
   // Build MathML equation
   // P₀ = Σ(C/(1+y)^t) + FV/(1+y)^n
   const mathML = `
-    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-      <mrow>
-        <msub>
-          <mi mathcolor="#b95b1d">P</mi>
-          <mn mathcolor="#b95b1d">0</mn>
-        </msub>
-        <mo>=</mo>
-        <munderover>
-          <mo>∑</mo>
-          <mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow>
-          <mn mathcolor="#15803d">${periods}</mn>
-        </munderover>
-        <mfrac linethickness="1.2px">
-          <mi mathvariant="bold" mathcolor="#3c6ae5">${couponFormatted}</mi>
-          <msup>
-            <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#15803d">y</mi><mo>)</mo></mrow>
-            <mi>t</mi>
-          </msup>
-        </mfrac>
-        <mo>+</mo>
-        <mfrac linethickness="1.2px">
-          <mi mathvariant="bold" mathcolor="#b35b21">${fvFormatted}</mi>
-          <msup>
-            <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#15803d">y</mi><mo>)</mo></mrow>
+    <div class="equation-math-wrapper">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <msub>
+            <mi mathcolor="#b95b1d">P</mi>
+            <mn mathcolor="#b95b1d">0</mn>
+          </msub>
+          <mo>=</mo>
+          <munderover>
+            <mo>∑</mo>
+            <mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow>
             <mn mathcolor="#15803d">${periods}</mn>
-          </msup>
-        </mfrac>
-      </mrow>
-    </math>
-    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; color: #374151;">
+          </munderover>
+          <mfrac linethickness="1.2px">
+            <mi mathvariant="bold" mathcolor="#3c6ae5">${couponFormatted}</mi>
+            <msup>
+              <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+              <mi>t</mi>
+            </msup>
+          </mfrac>
+          <mo>+</mo>
+          <mfrac linethickness="1.2px">
+            <mi mathvariant="bold" mathcolor="#0079a6">${fvFormatted}</mi>
+            <msup>
+              <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+              <mn mathcolor="#15803d">${periods}</mn>
+            </msup>
+          </mfrac>
+        </mrow>
+      </math>
+    </div>
+    <div class="equation-explanation">
       <div>Where: <span style="color: #b95b1d;"><strong>P<sub>0</sub></strong></span> = ${priceFormatted}, 
       <span style="color: #3c6ae5;"><strong>C</strong></span> = ${couponFormatted}, 
-      <span style="color: #15803d;"><strong>y</strong></span> = ${yFormatted} (semiannual)</div>
-      <div style="margin-top: 0.25rem;">Solving for y gives: <span style="color: #15803d;"><strong>YTM</strong></span> = ${ytmFormatted} (annualized)</div>
+      <span style="color: #7a46ff;"><strong>r</strong></span> = ${yFormatted} (semiannual)</div>
+      <div style="margin-top: 0.25rem;">Solving for r gives: <span style="color: #7a46ff;"><strong>YTM</strong></span> = ${ytmFormatted} (annualized)</div>
     </div>
   `;
   

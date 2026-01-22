@@ -31,9 +31,9 @@ export function renderTable(cashFlows, ytmBEY) {
       <tr>
         <th scope="col" class="text-left">Period</th>
         <th scope="col" class="text-left">Time (Years)</th>
-        <th scope="col" class="text-right">YTM <span style="color: #15803d;">(annual)</span></th>
+        <th scope="col" class="text-right">YTM <span style="color: #7a46ff;">(annual)</span></th>
         <th scope="col" class="text-right">Coupon <span style="color: #3c6ae5;">(C)</span></th>
-        <th scope="col" class="text-right">Principal <span style="color: #b35b21;">(FV)</span></th>
+        <th scope="col" class="text-right">Principal <span style="color: #0079a6;">(FV)</span></th>
         <th scope="col" class="text-right">Total Cash Flow</th>
       </tr>
     </thead>
@@ -49,10 +49,10 @@ export function renderTable(cashFlows, ytmBEY) {
       <tr>
         <td class="text-left">${cf.period}</td>
         <td class="text-left">${cf.timeYears.toFixed(1)}</td>
-        <td class="text-right" style="color: #15803d;" data-tooltip="Bond equivalent yield (annualized)" tabindex="0">${formatPercentage(ytmPercent)}</td>
-        <td class="text-right" style="color: #3c6ae5;" data-tooltip="${isInitial ? 'No coupon at time 0' : 'Semiannual coupon payment'}" tabindex="0">${formatCurrency(cf.couponPayment)}</td>
-        <td class="text-right" style="color: #b35b21;" data-tooltip="${isInitial ? 'Initial bond purchase (negative cash flow)' : (isFinal ? 'Face value returned at maturity' : 'No principal payment until maturity')}" tabindex="0">${formatCurrency(cf.principalPayment)}</td>
-        <td class="text-right" tabindex="0" data-tooltip="${isInitial ? 'Amount paid to purchase bond' : 'Coupon' + (isFinal ? ' + Face value' : '') + ' = ' + formatCurrency(cf.totalCashFlow)}"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
+        <td class="text-right" style="color: #7a46ff;" data-tooltip="Bond equivalent yield (annualized)">${formatPercentage(ytmPercent)}</td>
+        <td class="text-right" style="color: #3c6ae5;" data-tooltip="${isInitial ? 'No coupon at time 0' : 'Semiannual coupon payment'}">${formatCurrency(cf.couponPayment)}</td>
+        <td class="text-right" style="color: #0079a6;" data-tooltip="${isInitial ? 'Initial bond purchase (negative cash flow)' : (isFinal ? 'Face value returned at maturity' : 'No principal payment until maturity')}">${formatCurrency(cf.principalPayment)}</td>
+        <td class="text-right" data-tooltip="${isInitial ? 'Amount paid to purchase bond' : 'Coupon' + (isFinal ? ' + Face value' : '') + ' = ' + formatCurrency(cf.totalCashFlow)}"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
       </tr>`;
   });
 
@@ -64,7 +64,7 @@ export function renderTable(cashFlows, ytmBEY) {
   table.innerHTML = html;
 
   // Add accessibility attributes
-  table.setAttribute('aria-label', 'Bond cash flow table. Press Escape to exit table.');
+  table.setAttribute('aria-label', 'Bond cash flow table');
 
   announceToScreenReader('Table view loaded with bond cash flows.');
   
