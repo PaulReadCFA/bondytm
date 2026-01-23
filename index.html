@@ -17,8 +17,58 @@
         extensions: ["content-mathml.js"]
       },
       showProcessingMessages: false,
-      messageStyle: "none"
+      messageStyle: "none",
+      skipStartupTypeset: false,
+      
+      // Process equations quickly to minimize layout shift
+      "HTML-CSS": {
+        scale: 100,
+        minScaleAdjust: 50
+      }
     });
+    
+    // Fix WCAG issue: aria-hidden elements should not be focusable
+    // Run after MathJax finishes rendering
+    MathJax.Hub.Queue(function () {
+      fixAllAriaHiddenElements();
+      
+      // Show all rendered equations (they start hidden via CSS)
+      const allMath = document.querySelectorAll('.equation-container math');
+      allMath.forEach(math => {
+        math.style.visibility = 'visible';
+      });
+    });
+    
+    function fixAllAriaHiddenElements() {
+      // Fix 1: MathJax visual spans with role="presentation" need proper role for focusability
+      const presentationSpans = document.querySelectorAll('span.MathJax[role="presentation"][tabindex="0"]');
+      presentationSpans.forEach(span => {
+        // Add role="application" for Math Explorer functionality
+        span.setAttribute('role', 'application');
+        span.setAttribute('aria-label', 'Interactive math equation. Press Enter to explore.');
+      });
+      
+      // Fix 2: Remove aria-label from aria-hidden elements (not allowed)
+      const ariaHiddenWithLabel = document.querySelectorAll('[aria-hidden="true"][aria-label]');
+      ariaHiddenWithLabel.forEach(element => {
+        element.removeAttribute('aria-label');
+      });
+      
+      // Fix 3: All other aria-hidden elements should not be focusable
+      const ariaHiddenElements = document.querySelectorAll('[aria-hidden="true"]');
+      ariaHiddenElements.forEach(element => {
+        // Only set tabindex if not already set to -1
+        if (element.getAttribute('tabindex') !== '-1') {
+          element.setAttribute('tabindex', '-1');
+        }
+        
+        // Also fix any focusable children
+        const focusableChildren = element.querySelectorAll('[tabindex="0"], a, button, input, select, textarea');
+        focusableChildren.forEach(child => {
+          child.setAttribute('tabindex', '-1');
+        });
+      });
+    }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
   <script>
@@ -42,103 +92,112 @@
     </nav>
     
     <main class="content">
-      <!-- Card 0: Static Bond Valuation Equations -->
+      <!-- Card 0: Static Equation Derivation -->
       <section id="static-equation-card" class="card">
-        <h4 class="card-title">Bond Valuation Equations</h4>
-        <p class="equation-intro">
-          The general bond valuation equation with annual coupon payments:
-        </p>
-        
-        <div class="equation-container" role="region" aria-label="General bond valuation equation">
-          <div class="equation-math-wrapper">
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <div class="equation-container" role="region" aria-label="General bond valuation formula">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow>
+              <msub>
+                <mi mathcolor="#b95b1d">PV</mi>
+                <mtext mathcolor="#b95b1d">Coupon bond</mtext>
+              </msub>
+              <mo>=</mo>
+              <mfrac linethickness="1.2px">
+                <mi mathcolor="#3c6ae5">PMT</mi>
+                <mi mathcolor="#7a46ff">r</mi>
+              </mfrac>
+              <mo>×</mo>
               <mrow>
-                <msub>
-                  <mi mathvariant="bold" mathcolor="#b95b1d">PV</mi>
-                  <mtext mathcolor="#b95b1d">Coupon bond</mtext>
-                </msub>
-                <mo>=</mo>
+                <mo>[</mo>
+                <mn>1</mn>
+                <mo>−</mo>
                 <mfrac linethickness="1.2px">
-                  <mi mathvariant="bold" mathcolor="#3c6ae5">PMT</mi>
-                  <mi mathcolor="#7a46ff">r</mi>
-                </mfrac>
-                <mo>×</mo>
-                <mrow>
-                  <mo>[</mo>
                   <mn>1</mn>
-                  <mo>−</mo>
-                  <mfrac linethickness="1.2px">
-                    <mn>1</mn>
-                    <msup>
-                      <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
-                      <mi mathcolor="#15803d">T</mi>
-                    </msup>
-                  </mfrac>
-                  <mo>]</mo>
-                </mrow>
-                <mo>+</mo>
-                <mfrac linethickness="1.2px">
-                  <mi mathvariant="bold" mathcolor="#0079a6">FV</mi>
                   <msup>
                     <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
                     <mi mathcolor="#15803d">T</mi>
                   </msup>
                 </mfrac>
+                <mo>]</mo>
               </mrow>
-            </math>
-          </div>
+              <mo>+</mo>
+              <mfrac linethickness="1.2px">
+                <mi mathcolor="#0079a6">FV</mi>
+                <msup>
+                  <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+                  <mi mathcolor="#15803d">T</mi>
+                </msup>
+              </mfrac>
+            </mrow>
+          </math>
         </div>
         
-        <p class="equation-intro" style="margin-top: 1.5rem;">
-          Assuming that PMT and r are annual values and that a bond pays coupons semi-annually, we can modify this expression as follows:
+        <p class="equation-intro" style="margin-top: 1rem;">
+          Assuming that <span style="color: #3c6ae5;"><strong>PMT</strong></span> and <span style="color: #7a46ff;"><strong><i>r</i></strong></span> are annual values and that a bond pays coupons semiannually, we can modify this expression as follows:
         </p>
         
-        <div class="equation-container" role="region" aria-label="Semi-annual bond valuation equation">
-          <div class="equation-math-wrapper">
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <div class="equation-container" role="region" aria-label="Semiannual bond valuation formula">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow>
+              <msub>
+                <mi mathcolor="#b95b1d">PV</mi>
+                <mtext mathcolor="#b95b1d">Coupon bond</mtext>
+              </msub>
+              <mo>=</mo>
+              <mfrac linethickness="1.2px">
+                <mi mathcolor="#3c6ae5">PMT</mi>
+                <mi mathcolor="#7a46ff">r</mi>
+              </mfrac>
+              <mo>×</mo>
               <mrow>
-                <msub>
-                  <mi mathvariant="bold" mathcolor="#b95b1d">PV</mi>
-                  <mtext mathcolor="#b95b1d">Coupon bond</mtext>
-                </msub>
-                <mo>=</mo>
+                <mo>[</mo>
+                <mn>1</mn>
+                <mo>−</mo>
                 <mfrac linethickness="1.2px">
-                  <mi mathvariant="bold" mathcolor="#3c6ae5">PMT</mi>
-                  <mi mathcolor="#7a46ff">r</mi>
-                </mfrac>
-                <mo>×</mo>
-                <mrow>
-                  <mo>[</mo>
                   <mn>1</mn>
-                  <mo>−</mo>
-                  <mfrac linethickness="1.2px">
-                    <mn>1</mn>
-                    <msup>
-                      <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>/</mo><mn>2</mn><mo>)</mo></mrow>
-                      <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
-                    </msup>
-                  </mfrac>
-                  <mo>]</mo>
-                </mrow>
-                <mo>+</mo>
-                <mfrac linethickness="1.2px">
-                  <mi mathvariant="bold" mathcolor="#0079a6">FV</mi>
                   <msup>
-                    <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>/</mo><mn>2</mn><mo>)</mo></mrow>
+                    <mrow>
+                      <mo>(</mo>
+                      <mn>1</mn>
+                      <mo>+</mo>
+                      <mfrac linethickness="1.2px">
+                        <mi mathcolor="#7a46ff">r</mi>
+                        <mn>2</mn>
+                      </mfrac>
+                      <mo>)</mo>
+                    </mrow>
                     <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
                   </msup>
                 </mfrac>
+                <mo>]</mo>
               </mrow>
-            </math>
-          </div>
+              <mo>+</mo>
+              <mfrac linethickness="1.2px">
+                <mi mathcolor="#0079a6">FV</mi>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mn>1</mn>
+                    <mo>+</mo>
+                    <mfrac linethickness="1.2px">
+                      <mi mathcolor="#7a46ff">r</mi>
+                      <mn>2</mn>
+                    </mfrac>
+                    <mo>)</mo>
+                  </mrow>
+                  <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
+                </msup>
+              </mfrac>
+            </mrow>
+          </math>
         </div>
       </section>
       
-      <!-- Card 1: Equation -->
+      <!-- Card 1: Dynamic Equation with Your Values -->
       <section id="equation-card" class="card">
-        <h4 class="card-title">Bond Yield to Maturity Calculation</h4>
+        <h4 class="card-title">Bond Yield to Maturity Equation with Your Values</h4>
         <p class="equation-intro">
-          This equation calculates the yield to maturity (r) that equates the present value of cash flows to the bond price, using the semi-annual formulation:
+          Using the semiannual bond valuation formula with your specific values:
         </p>
         
         <!-- Dynamic equation with actual values -->
@@ -148,6 +207,8 @@
           </div>
         </div>
       </section>
+
+
 
       <!-- Card 2: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
@@ -189,18 +250,18 @@
               </div>
 
               <div class="input-inline">
-                <label for="coupon-rate" class="input-label-inline">
-                  Coupon rate <span style="color: #3c6ae5;">(annual)</span>:
+                <label for="coupon-payment" class="input-label-inline">
+                  Annual coupon payment <span style="color: #3c6ae5;">(C)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
+                  <span class="input-prefix-inline">USD</span>
                   <input 
                     type="number" 
-                    id="coupon-rate" 
-                    class="input-field-inline"
-                    min="0" max="30" step="0.1" value="11.0088"
-                    aria-describedby="coupon-rate-help">
-                  <span class="input-suffix-inline">%</span>
-                  <span class="sr-only" id="coupon-rate-help">Enter an annual coupon rate between 0% and 30%</span>
+                    id="coupon-payment" 
+                    class="input-field-inline input-with-prefix"
+                    min="0" max="30" step="0.5" value="11.00"
+                    aria-describedby="coupon-payment-help">
+                  <span class="sr-only" id="coupon-payment-help">Enter annual coupon payment between USD 0 and USD 30</span>
                 </div>
               </div>
 
@@ -230,8 +291,9 @@
         </div>
       </section>
 
+
       <!-- Card 3: Visualizer -->
-      <section class="card" id="visualizer" tabindex="-1">
+      <section class="card" id="visualizer" tabindex="-1" style="min-height: 650px;">
         <h4 class="card-title">Bond Cash Flow and Yield Analysis</h4>
         <div class="card-content">
           <!-- View toggle buttons -->
@@ -239,19 +301,19 @@
             <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #b95b1d;"></span>
-                Bond price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>
+                Bond purchase <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                Coupon payments
+                Coupon payments <span style="color: #3c6ae5;">(C)</span>
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #0079a6;"></span>
-                Face value <span style="color: #0079a6;">(FV)</span>
+                Principal repayment <span style="color: #0079a6;">(FV)</span>
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Yield to maturity <span style="color: #7a46ff;">(<i>r</i>)</span>
+                Yield-to-maturity <span style="color: #7a46ff;">(<i>r</i>)</span>
               </span>
             </div>
             
@@ -301,14 +363,13 @@
                role="region"  
                aria-label="Bond cash flow and yield table"  
                tabindex="-1">
-            <table id="cash-flow-table" class="data-table" role="table" aria-label="Bond cash flow table" tabindex="0">
+            <table id="cash-flow-table" class="data-table" aria-label="Bond cash flow table" tabindex="0">
               <!-- Populated by JavaScript -->
             </table>
           </div>
         </div>
       </section>
 
-      <!-- Card 4: Results & Analysis -->
       <section class="card" id="results-card">
         <h4 class="card-title">Results and Analysis</h4>
         <div class="card-content">

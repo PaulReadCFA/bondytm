@@ -6,7 +6,7 @@
 export const state = {
   // Bond parameters
   bondPrice: 97.76,
-  couponRate: 11.0088,
+  couponPayment: 11.00, // Annual coupon payment in dollars
   years: 5,
   faceValue: 100,
   frequency: 2, // Semiannual

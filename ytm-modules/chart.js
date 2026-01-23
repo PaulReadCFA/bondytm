@@ -91,7 +91,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         },
         // YTM horizontal line
         ...(ytmBEY !== null ? [{
-          label: 'Yield to maturity (r)',
+          label: 'Yield-to-maturity (r)',
           data: labels.map(() => ytmBEY * 100),
           type: 'line',
           borderColor: COLORS.yield,
@@ -139,19 +139,19 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
               const index = context.dataIndex;
               const isInitialPeriod = index === 0;
               
-              if (context.dataset.label === 'Yield to maturity (r)') {
-                return `Yield to maturity (r): ${formatPercentage(value)}`;
+              if (context.dataset.label === 'Yield-to-maturity (r)') {
+                return `Yield-to-maturity (r): ${formatPercentage(value)}`;
               }
               
               if (isInitialPeriod && context.dataset.label === 'Principal/Purchase') {
-                return `Bond price (PV): ${formatCurrency(value, true)}`;
+                return `Bond purchase (PV): ${formatCurrency(value, true)}`;
               }
               
               if (context.dataset.label === 'Principal/Purchase' && value > 0) {
-                return `Face value (FV): ${formatCurrency(value, true)}`;
+                return `Principal repayment (FV): ${formatCurrency(value, true)}`;
               }
               if (context.dataset.label === 'Coupon payments') {
-                return `Coupon payment: ${formatCurrency(value, true)}`;
+                return `Coupon payment (C): ${formatCurrency(value, true)}`;
               }
               
               return `${context.dataset.label}: ${formatCurrency(value, true)}`;
@@ -340,9 +340,9 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         const bottomY = Math.max(...allYValues);
         
         ctx.save();
-        ctx.strokeStyle = COLORS.darkText;
-        ctx.lineWidth = 3;
-        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = '#000000';  // Black
+        ctx.lineWidth = 2;
+        ctx.setLineDash([2, 3]);  // Dotted pattern (2px dash, 3px gap)
         
         const x = bar1.x - bar1.width / 2 - 4;
         const y = topY - 4;
@@ -363,12 +363,6 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         
         if (!meta || !meta.data || meta.data.length === 0) return;
         
-        ctx.save();
-        ctx.fillStyle = COLORS.yield;
-        ctx.font = 'italic bold 12px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        
         // Position label in the middle of the line, above it
         const middleIndex = Math.floor(meta.data.length / 2);
         const middlePoint = meta.data[middleIndex];
@@ -376,11 +370,43 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         if (middlePoint) {
           const x = middlePoint.x;
           const y = middlePoint.y - 8; // 8px above the line
-          // Display the actual YTM value instead of just "r"
-          ctx.fillText(`r = ${formatPercentage(ytmBEY * 100)}`, x, y);
+          
+          ctx.save();
+          
+          // Format YTM percentage
+          const ytmPercent = (ytmBEY * 100).toFixed(2);
+          const text = `r = ${ytmPercent}%`;
+          
+          // Measure text for box sizing
+          ctx.font = 'italic bold 11px sans-serif';
+          const metrics = ctx.measureText(text);
+          const textWidth = metrics.width;
+          const textHeight = 11; // Font size
+          
+          // Draw white background box with purple border
+          const padding = 3;
+          const boxX = x - textWidth / 2 - padding;
+          const boxY = y - textHeight - padding;
+          const boxWidth = textWidth + padding * 2;
+          const boxHeight = textHeight + padding * 2;
+          
+          // White background
+          ctx.fillStyle = 'white';
+          ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+          
+          // Purple border
+          ctx.strokeStyle = COLORS.yield;
+          ctx.lineWidth = 2;
+          ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+          
+          // Draw text
+          ctx.fillStyle = COLORS.yield;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText(text, x, y);
+          
+          ctx.restore();
         }
-        
-        ctx.restore();
       }
     }]
   });
@@ -498,11 +524,11 @@ function announceDataPoint(cashFlow, total, ytmBEY) {
   }
   
   const isInitialPeriod = cashFlow.period === 0;
-  const principalLabel = isInitialPeriod ? 'Bond price (PV)' : 'Face value (FV)';
+  const principalLabel = isInitialPeriod ? 'Bond purchase (PV)' : 'Principal repayment (FV)';
   
   const announcement = `Time ${cashFlow.timeYears.toFixed(1)} years. ` +
-    `Yield to maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
-    `Coupon payment: ${formatCurrency(cashFlow.couponPayment, true)}. ` +
+    `Yield-to-maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
+    `Coupon payment (C): ${formatCurrency(cashFlow.couponPayment, true)}. ` +
     `${principalLabel}: ${formatCurrency(cashFlow.principalPayment, true)}. ` +
     `Total: ${formatCurrency(total, true)}.`;
   

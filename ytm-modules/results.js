@@ -41,7 +41,7 @@ function createYTMBox(calculations) {
   const box = createElement('div', { className: 'result-box ytm-result' });
   
   const title = createElement('h5', { className: 'result-title ytm-result' }, 
-    'Yield to Maturity (r)'
+    'Yield-to-maturity (r)'
   );
   box.appendChild(title);
   
@@ -96,8 +96,8 @@ function createBondDetailsBox(calculations, params) {
   const list = createElement('ul', { className: 'model-info-list' });
   
   const items = [
-    { label: 'Coupon', value: `${formatPercentage(params.couponRate)} annual` },
-    { label: 'Semiannual payment', value: formatCurrency(calculations.couponPayment) },
+    { label: 'Coupon (annual)', value: formatCurrency(params.couponPayment) },
+    { label: 'Coupon (semiannual)', value: formatCurrency(calculations.couponPayment) },
     { label: 'Periods', value: `${calculations.periods} (semiannual)` },
     { label: 'Years', value: params.years.toString() }
   ];

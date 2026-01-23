@@ -18,49 +18,57 @@ export function renderDynamicEquation(calculations, params) {
     return;
   }
   
-  // STEP 1: BEFORE rendering - Lock height to prevent jumping
-  const equationCard = document.getElementById('dynamic-equation-container');
-  if (equationCard) {
-    const currentHeight = equationCard.getBoundingClientRect().height;
-    // Triple-lock the height (prevents any flex/shrink)
-    equationCard.style.height = `${currentHeight}px`;
-    equationCard.style.minHeight = `${currentHeight}px`;
-    equationCard.style.maxHeight = `${currentHeight}px`;
-    equationCard.style.overflow = 'hidden';
+  // Safety check - but allow small values close to zero
+  if (!calculations || calculations.bondEquivalentYield === null || 
+      calculations.bondEquivalentYield === undefined || 
+      isNaN(calculations.bondEquivalentYield) ||
+      calculations.couponPayment === null || 
+      calculations.couponPayment === undefined ||
+      isNaN(calculations.couponPayment)) {
+    return;
   }
   
+  // BEFORE rendering: Lock the equation container heights to prevent jumping
+  const equationContainers = document.querySelectorAll('.equation-container');
+  const heights = new Map();
+  
+  equationContainers.forEach(box => {
+    // Store the current computed height
+    const currentHeight = box.getBoundingClientRect().height;
+    heights.set(box, currentHeight);
+    // Lock the height temporarily
+    box.style.height = `${currentHeight}px`;
+    box.style.minHeight = `${currentHeight}px`;
+    box.style.maxHeight = `${currentHeight}px`;
+    box.style.overflow = 'hidden';
+  });
+  
   const { bondEquivalentYield, couponPayment, periods } = calculations;
-  const { bondPrice, faceValue, couponRate } = params;
+  const { bondPrice, faceValue } = params;
   
   // Format values for display
   const ytmFormatted = formatPercentage(bondEquivalentYield * 100);
   const priceFormatted = formatCurrency(bondPrice);
-  const couponFormatted = formatCurrency(couponPayment);
+  const couponSemiannualFormatted = formatCurrency(couponPayment); // Per-period (semiannual)
   const fvFormatted = formatCurrency(faceValue);
   const periodicYield = bondEquivalentYield / 2; // Semiannual
   const yFormatted = formatPercentage(periodicYield * 100);
   
-  // Annual PMT (full coupon rate * face value)
-  const annualPMT = (couponRate / 100) * faceValue;
-  const annualPMTFormatted = formatCurrency(annualPMT);
-  
-  // Years (T)
-  const years = periods / 2;
-  
-  // STEP 2: Build MathML equation using the semi-annual formulation
-  // PV_coupon bond = PMT/r × [1 - 1/(1+r/2)^(2T)] + FV/(1+r/2)^(2T)
+  // Build MathML equation - Annuity formula with semiannual compounding
+  // PV = C/(r/2) × [1 - 1/(1+r/2)^n] + FV/(1+r/2)^n
+  // where C is the semiannual coupon payment, r is the annual yield, n is number of periods
   const mathML = `
     <div class="equation-math-wrapper">
       <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
         <mrow>
-          <msub>
-            <mi mathvariant="bold" mathcolor="#b95b1d">PV</mi>
-            <mtext mathcolor="#b95b1d">Coupon bond</mtext>
-          </msub>
+          <mi mathvariant="bold" mathcolor="#b95b1d">${priceFormatted}</mi>
           <mo>=</mo>
           <mfrac linethickness="1.2px">
-            <mi mathvariant="bold" mathcolor="#3c6ae5">${annualPMTFormatted}</mi>
-            <mi mathcolor="#7a46ff">r</mi>
+            <mi mathvariant="bold" mathcolor="#3c6ae5">${couponSemiannualFormatted}</mi>
+            <mfrac linethickness="1.2px">
+              <mi mathcolor="#7a46ff">r</mi>
+              <mn>2</mn>
+            </mfrac>
           </mfrac>
           <mo>×</mo>
           <mrow>
@@ -70,8 +78,17 @@ export function renderDynamicEquation(calculations, params) {
             <mfrac linethickness="1.2px">
               <mn>1</mn>
               <msup>
-                <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>/</mo><mn>2</mn><mo>)</mo></mrow>
-                <mrow><mn>2</mn><mo>×</mo><mn mathcolor="#15803d">${years}</mn></mrow>
+                <mrow>
+                  <mo>(</mo>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                  <mfrac linethickness="1.2px">
+                    <mi mathcolor="#7a46ff">r</mi>
+                    <mn>2</mn>
+                  </mfrac>
+                  <mo>)</mo>
+                </mrow>
+                <mn mathcolor="#15803d">${periods}</mn>
               </msup>
             </mfrac>
             <mo>]</mo>
@@ -80,53 +97,57 @@ export function renderDynamicEquation(calculations, params) {
           <mfrac linethickness="1.2px">
             <mi mathvariant="bold" mathcolor="#0079a6">${fvFormatted}</mi>
             <msup>
-              <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>/</mo><mn>2</mn><mo>)</mo></mrow>
-              <mrow><mn>2</mn><mo>×</mo><mn mathcolor="#15803d">${years}</mn></mrow>
+              <mrow>
+                <mo>(</mo>
+                <mn>1</mn>
+                <mo>+</mo>
+                <mfrac linethickness="1.2px">
+                  <mi mathcolor="#7a46ff">r</mi>
+                  <mn>2</mn>
+                </mfrac>
+                <mo>)</mo>
+              </mrow>
+              <mn mathcolor="#15803d">${periods}</mn>
             </msup>
           </mfrac>
         </mrow>
       </math>
     </div>
     <div class="equation-explanation">
-      <div>Where: <span style="color: #b95b1d;"><strong>PV<sub>Coupon bond</sub></strong></span> = ${priceFormatted}, 
-      <span style="color: #3c6ae5;"><strong>PMT</strong></span> = ${annualPMTFormatted} (annual), 
-      <span style="color: #0079a6;"><strong>FV</strong></span> = ${fvFormatted},
-      <span style="color: #15803d;"><strong>T</strong></span> = ${years} years</div>
-      <div style="margin-top: 0.25rem;">Solving for r gives: <span style="color: #7a46ff;"><strong>yield to maturity (r)</strong></span> = ${ytmFormatted} (annualized)</div>
+      <div>Solving for <span style="color: #7a46ff;"><strong><i>r</i></strong></span> gives: <span style="color: #7a46ff;"><strong>yield-to-maturity</strong></span> = ${ytmFormatted} annualized (${yFormatted} semiannual)</div>
     </div>
   `;
   
   container.innerHTML = mathML;
   
-  // STEP 3: Trigger MathJax to process
+  // Trigger MathJax to render the equation
   if (typeof MathJax !== 'undefined' && MathJax.Hub) {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, container], function() {
-      // STEP 4: AFTER MathJax completes - Release the height lock
-      // Wait 200ms to ensure MathJax is fully done
+      // Remove tabindex from MathJax elements for accessibility
       setTimeout(function() {
-        if (equationCard) {
-          equationCard.style.height = '';
-          equationCard.style.minHeight = '';
-          equationCard.style.maxHeight = '';
-          equationCard.style.overflow = '';
-        }
+        const mathJaxElements = document.querySelectorAll('.MathJax[tabindex]');
+        mathJaxElements.forEach(function(el) {
+          el.removeAttribute('tabindex');
+        });
+      }, 10);
+      
+      // AFTER rendering: Release height lock and let boxes resize naturally
+      setTimeout(function() {
+        equationContainers.forEach(box => {
+          box.style.height = '';
+          box.style.minHeight = '';
+          box.style.maxHeight = '';
+          box.style.overflow = '';
+        });
       }, 200);
     });
-  } else {
-    // If MathJax not available, unlock immediately
-    if (equationCard) {
-      equationCard.style.height = '';
-      equationCard.style.minHeight = '';
-      equationCard.style.maxHeight = '';
-      equationCard.style.overflow = '';
-    }
   }
   
   // Create screen-reader friendly announcement
-  const announcement = `Bond price ${priceFormatted} equals the present value of coupon payments plus discounted face value. ` +
-    `Annual coupon payment is ${annualPMTFormatted}. ` +
-    `Face value ${fvFormatted} is received at maturity in ${years} years. ` +
-    `Solving for the yield gives yield to maturity of ${ytmFormatted}.`;
+  const announcement = `Bond price ${priceFormatted} equals the annuity formula for semiannual coupon payments. ` +
+    `Semiannual coupon payment ${couponSemiannualFormatted} divided by semiannual rate, ` +
+    `times the annuity factor, plus face value ${fvFormatted} discounted to present. ` +
+    `Solving for the yield gives yield-to-maturity of ${ytmFormatted} annualized, or ${yFormatted} semiannual.`;
   
   // Update aria-live region for screen readers
   let liveRegion = document.getElementById('equation-live-region');

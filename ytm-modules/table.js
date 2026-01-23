@@ -23,17 +23,17 @@ export function renderTable(cashFlows, ytmBEY) {
   // Build the HTML string
   let html = `
     <caption class="sr-only">
-      Bond cash flow schedule showing period, time in years, yield to maturity, coupon payments,
-      face value, and total cash flows. Note: Values in parentheses indicate negative cash flows.
+      Bond cash flow schedule showing period, time in years, yield-to-maturity, coupon payments,
+      principal repayment, and total cash flows.
     </caption>
 
     <thead>
       <tr>
         <th scope="col" class="text-left">Period</th>
         <th scope="col" class="text-left">Time (Years)</th>
-        <th scope="col" class="text-right">YTM <span style="color: #7a46ff;">(<i>r</i>)</span></th>
-        <th scope="col" class="text-right">Coupon Payment</th>
-        <th scope="col" class="text-right">Face Value <span style="color: #0079a6;">(FV)</span></th>
+        <th scope="col" class="text-right">Yield-to-maturity <span style="color: #7a46ff;">(<i>r</i>)</span></th>
+        <th scope="col" class="text-right">Coupon <span style="color: #3c6ae5;">(C)</span></th>
+        <th scope="col" class="text-right">Principal <span style="color: #0079a6;">(FV)</span></th>
         <th scope="col" class="text-right">Total Cash Flow</th>
       </tr>
     </thead>
@@ -42,17 +42,14 @@ export function renderTable(cashFlows, ytmBEY) {
 
   // Add a row for every cash-flow
   cashFlows.forEach((cf, index) => {
-    const isInitial = index === 0;
-    const isFinal = index === cashFlows.length - 1;
-
     html += `
       <tr>
         <td class="text-left">${cf.period}</td>
         <td class="text-left">${cf.timeYears.toFixed(1)}</td>
-        <td class="text-right" style="color: #7a46ff;" data-tooltip="Bond equivalent yield (annualized)">${formatPercentage(ytmPercent)}</td>
-        <td class="text-right" style="color: #3c6ae5;" data-tooltip="${isInitial ? 'No coupon at time 0' : 'Semiannual coupon payment'}">${formatCurrency(cf.couponPayment)}</td>
-        <td class="text-right" style="color: #0079a6;" data-tooltip="${isInitial ? 'Initial bond purchase (negative cash flow)' : (isFinal ? 'Face value returned at maturity' : 'No principal payment until maturity')}">${formatCurrency(cf.principalPayment)}</td>
-        <td class="text-right" data-tooltip="${isInitial ? 'Amount paid to purchase bond' : 'Coupon' + (isFinal ? ' + Face value' : '') + ' = ' + formatCurrency(cf.totalCashFlow)}"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
+        <td class="text-right" style="color: #7a46ff;">${formatPercentage(ytmPercent)}</td>
+        <td class="text-right" style="color: #3c6ae5;">${formatCurrency(cf.couponPayment)}</td>
+        <td class="text-right" style="color: #0079a6;">${formatCurrency(cf.principalPayment)}</td>
+        <td class="text-right"><strong>${formatCurrency(cf.totalCashFlow)}</strong></td>
       </tr>`;
   });
 

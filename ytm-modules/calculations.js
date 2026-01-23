@@ -8,24 +8,31 @@
  * 
  * @param {Object} params - Bond parameters
  * @param {number} params.bondPrice - Current bond price
- * @param {number} params.couponRate - Annual coupon rate (percentage)
+ * @param {number} params.couponPayment - Annual coupon payment (dollars)
  * @param {number} params.years - Years to maturity
  * @param {number} params.faceValue - Face value of the bond
  * @param {number} params.frequency - Payment frequency per year (2 for semiannual)
  * @returns {Object} YTM calculation results
  */
-export function calculateYTM({ bondPrice, couponRate, years, faceValue, frequency }) {
+export function calculateYTM({ bondPrice, couponPayment, years, faceValue, frequency }) {
+  // Ensure all inputs are numbers
+  bondPrice = Number(bondPrice);
+  couponPayment = Number(couponPayment);
+  years = Number(years);
+  faceValue = Number(faceValue);
+  frequency = Number(frequency);
+  
   const periods = years * frequency;
-  const couponPayment = (couponRate / 100) * faceValue / frequency;
+  const couponPaymentPerPeriod = couponPayment / frequency; // Convert annual to periodic
   
   // Build cash flow array
   const cashFlows = [];
   for (let i = 0; i < periods; i++) {
     if (i === periods - 1) {
       // Last period includes coupon + face value
-      cashFlows.push(couponPayment + faceValue);
+      cashFlows.push(couponPaymentPerPeriod + faceValue);
     } else {
-      cashFlows.push(couponPayment);
+      cashFlows.push(couponPaymentPerPeriod);
     }
   }
   
@@ -69,7 +76,7 @@ export function calculateYTM({ bondPrice, couponRate, years, faceValue, frequenc
     bondEquivalentYield,
     effectiveAnnualYield,
     periods,
-    couponPayment,
+    couponPayment: couponPaymentPerPeriod, // Per-period payment for display
     cashFlows,
     iterations
   };
@@ -149,12 +156,12 @@ export function analyzeBondPricing(bondPrice, faceValue) {
  * @returns {Object} Complete YTM calculations
  */
 export function calculateBondYTMMetrics(params) {
-  const { bondPrice, couponRate, years, faceValue, frequency } = params;
+  const { bondPrice, couponPayment, years, faceValue, frequency } = params;
   
   // Calculate YTM
   const ytmData = calculateYTM({
     bondPrice,
-    couponRate,
+    couponPayment,
     years,
     faceValue,
     frequency

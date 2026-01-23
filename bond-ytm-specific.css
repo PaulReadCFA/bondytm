@@ -40,39 +40,39 @@
 }
 
 /* ==========================================================================
-   2. RESULT BOXES Ã¢â‚¬â€œ Bond YTM Specific
+   2. RESULT BOXES â€“ Bond YTM Specific
    ========================================================================== */
 .result-box.ytm-result {
+  background-color: var(--color-bg-purple);
+  border-color: var(--color-purple-bold);
+}
+
+.result-box.bond-details {
   background-color: var(--color-bg-blue);
   border-color: var(--color-blue-interactive);
 }
 
-.result-box.bond-details {
-  background-color: var(--color-bg-teal);
-  border-color: var(--color-teal-data);
-}
-
 .result-box.price-comparison {
-  background-color: var(--color-bg-purple);
-  border-color: var(--color-purple-bold);
+  background-color: var(--color-bg-orange);
+  border-color: var(--color-orange-darker);
 }
 
 .result-title.ytm-result {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--color-blue-interactive);
-}
-
-.result-title.bond-details {
-  color: var(--color-teal-data);
-}
-
-.result-title.price-comparison {
   color: var(--color-purple-bold);
 }
 
-.result-value {
+.result-title.bond-details {
   color: var(--color-blue-interactive);
+}
+
+.result-title.price-comparison {
+  color: var(--color-orange-darker);
+}
+
+.result-value {
+  color: var(--color-purple-bold);
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
@@ -138,7 +138,7 @@
 }
 
 /* ==========================================================================
-   4. INPUT LAYOUT Ã¢â‚¬â€œ Inline with Labels
+   4. INPUT LAYOUT â€“ Inline with Labels
    ========================================================================== */
 .input-group-inline {
   display: flex;
@@ -208,10 +208,12 @@
   transform: translateY(-50%);
   color: var(--color-gray-500);
   pointer-events: none;
-  width: 1.5rem;
+  width: auto;
+  max-width: 4rem;
   text-align: right;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 /* When we have a prefix, ensure proper spacing */
@@ -252,7 +254,7 @@
 }
 
 /* ==========================================================================
-   5. EQUATION DISPLAY Ã¢â‚¬â€œ Bond YTM Specific
+   5. EQUATION DISPLAY â€“ Bond YTM Specific
    ========================================================================== */
 .equation-intro {
   font-size: 0.875rem;
@@ -273,6 +275,41 @@
   -webkit-overflow-scrolling: touch;
   container-type: inline-size;
   container-name: equation;
+  min-height: 120px; /* Reserve space to prevent jumping */
+  position: relative;
+}
+
+/* Hide raw MathML until MathJax processes it */
+.equation-container math {
+  visibility: hidden;
+}
+
+/* Show MathJax processed content */
+.equation-container .MathJax {
+  visibility: visible !important;
+}
+
+.equation-container mjx-container {
+  visibility: visible !important;
+}
+
+/* MathJax wrapper - prevent layout shift for all equations */
+.equation-container .MathJax,
+.equation-container mjx-container {
+  font-size: 100% !important;
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  
+  /* Initial scale to prevent layout shift when MathJax renders */
+  transform: scale(0.9);
+  transform-origin: center center;
+  
+  /* Smooth transitions */
+  transition: transform 0.2s ease-out;
 }
 
 /* Center the MathML equation itself */
@@ -298,6 +335,19 @@
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #374151;
+}
+
+/* Print: always show equation at full size */
+@media print {
+  #dynamic-equation-container .MathJax,
+  #dynamic-equation-container mjx-container {
+    transform: none !important;
+  }
+  
+  .equation-container .MathJax,
+  .equation-container mjx-container {
+    transform: none !important;
+  }
 }
 
 /* Responsive equation scaling */
@@ -356,10 +406,55 @@ math {
   margin-top: 0.5rem;
 }
 
+/* Static equation containers - need more height for larger formulas */
+#static-equation-card .equation-container {
+  min-height: 150px;
+}
+
 /* Dynamic equation - slightly smaller */
+#dynamic-equation-container {
+  min-height: 140px; /* Reserve more space for dynamic equation */
+}
+
 #dynamic-equation-container math {
   font-size: 1rem;
   color: var(--color-gray-700);
+  visibility: hidden; /* Hide until MathJax renders */
+}
+
+/* MathJax wrapper - prevent layout shift with initial scale */
+#dynamic-equation-container .MathJax,
+#dynamic-equation-container mjx-container {
+  font-size: 100% !important;
+  margin: 0 auto !important;  /* Center the equation */
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  
+  /* Initial scale to prevent layout shift when MathJax renders */
+  transform: scale(0.85);
+  transform-origin: center center;  /* Center origin for centered alignment */
+  
+  /* Smooth transitions for scale changes */
+  transition: transform 0.2s ease-out;
+}
+
+/* Ensure centering wrapper */
+#dynamic-equation-container .equation-math-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Print: always show equation at full size */
+@media print {
+  #dynamic-equation-container .MathJax,
+  #dynamic-equation-container mjx-container {
+    transform: none !important;
+  }
 }
 
 /* Dynamic equation responsive scaling */

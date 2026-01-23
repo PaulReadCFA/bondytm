@@ -112,7 +112,7 @@ function setupSkipLinks() {
 function setupInputListeners() {
   const inputs = [
     { id: 'bond-price', field: 'bondPrice' },
-    { id: 'coupon-rate', field: 'couponRate' },
+    { id: 'coupon-payment', field: 'couponPayment' },
     { id: 'years', field: 'years' }
   ];
   
@@ -159,7 +159,7 @@ function setupInputListeners() {
  * Update YTM calculations based on current state
  */
 function updateCalculations() {
-  const { bondPrice, couponRate, years, faceValue, frequency, errors } = state;
+  const { bondPrice, couponPayment, years, faceValue, frequency, errors } = state;
   
   // Don't calculate if there are validation errors
   if (hasErrors(errors)) {
@@ -171,7 +171,7 @@ function updateCalculations() {
     // Calculate YTM metrics
     const calculations = calculateBondYTMMetrics({
       bondPrice,
-      couponRate,
+      couponPayment,
       years,
       faceValue,
       frequency
@@ -202,61 +202,93 @@ function setupViewToggle() {
     return;
   }
   
-  // Chart button - use addEventListener directly with capture phase
-  if (chartBtn) {
-    chartBtn.addEventListener('click', (e) => {
-      // FIRST: Check if narrow screen before anything else
-      const isForced = document.body.classList.contains('force-table');
+  // Chart button click handler
+  chartBtn.addEventListener('click', (e) => {
+    const isForced = document.body.classList.contains('force-table');
+    
+    if (isForced || chartBtn.disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
       
-      if (isForced || chartBtn.disabled) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        console.log('Chart button blocked - narrow screen detected');
-        
-        // Visual feedback: briefly highlight table button
-        if (tableBtn) {
-          tableBtn.style.transition = 'transform 0.2s ease';
-          tableBtn.style.transform = 'scale(1.05)';
-          setTimeout(() => {
-            tableBtn.style.transform = 'scale(1)';
-          }, 200);
-        }
-        
-        // Force table view
-        switchView('table');
-        
-        return false;
+      console.log('Chart button blocked - narrow screen detected');
+      
+      // Visual feedback: briefly highlight table button
+      if (tableBtn) {
+        tableBtn.style.transition = 'transform 0.2s ease';
+        tableBtn.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+          tableBtn.style.transform = 'scale(1)';
+        }, 200);
       }
       
-      // Normal behavior - allow chart view
-      switchView('chart');
-    }, true); // Use capture phase
-  }
+      // Force table view
+      switchView('table');
+      
+      return false;
+    }
+    
+    // Check if this was triggered by keyboard (Enter/Space)
+    const isKeyboard = e.detail === 0;
+    
+    // Normal behavior - allow chart view
+    switchView('chart');
+    
+    // If keyboard activation, focus the chart
+    if (isKeyboard) {
+      setTimeout(() => {
+        const canvas = $('#ytm-chart');
+        if (canvas) {
+          canvas.focus();
+        }
+      }, 100);
+    }
+  }, true);
   
-  listen(tableBtn, 'click', () => switchView('table'));
+  // Table button click handler
+  tableBtn.addEventListener('click', (e) => {
+    // Check if this was triggered by keyboard (Enter/Space)
+    const isKeyboard = e.detail === 0;
+    
+    switchView('table');
+    
+    // If keyboard activation, focus the table
+    if (isKeyboard) {
+      setTimeout(() => {
+        const table = $('#cash-flow-table');
+        if (table) {
+          table.focus();
+        }
+      }, 100);
+    }
+  });
   
-  // Add arrow key navigation for toggle buttons
+  // Arrow key navigation for toggle buttons
   const handleArrowKeys = (e) => {
+    // Only handle arrow keys
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
       e.stopPropagation();
       
       const isForced = document.body.classList.contains('force-table');
+      const currentlyOnChart = chartBtn === document.activeElement;
+      const currentlyOnTable = tableBtn === document.activeElement;
       
       if (e.key === 'ArrowRight') {
-        // Right arrow: switch to table view
-        switchViewWithoutFocus('table');
-        // Keep focus on table button
-        setTimeout(() => tableBtn.focus(), 0);
-      } else if (e.key === 'ArrowLeft' && !isForced && !chartBtn.disabled) {
-        // Left arrow: switch to chart view (if allowed)
-        switchViewWithoutFocus('chart');
-        // Keep focus on chart button
-        setTimeout(() => chartBtn.focus(), 0);
+        // Right arrow: move to table button and switch to table view
+        if (currentlyOnChart) {
+          tableBtn.focus();
+          switchViewWithoutFocus('table');
+        }
+      } else if (e.key === 'ArrowLeft') {
+        // Left arrow: move to chart button (if allowed) and switch to chart view
+        if (currentlyOnTable && !isForced && !chartBtn.disabled) {
+          chartBtn.focus();
+          switchViewWithoutFocus('chart');
+        }
       }
     }
+    // Enter and Space are handled by default click behavior
   };
   
   chartBtn.addEventListener('keydown', handleArrowKeys);
@@ -264,7 +296,8 @@ function setupViewToggle() {
 }
 
 /**
- * Switch view without moving focus to content (for arrow key navigation)
+ * Switch between chart and table views WITHOUT moving focus to content
+ * Used for arrow key navigation on toggle buttons
  * @param {string} view - 'chart' or 'table'
  */
 function switchViewWithoutFocus(view) {
@@ -289,7 +322,7 @@ function switchViewWithoutFocus(view) {
     tableContainer.style.display = 'none';
     legend.style.display = 'flex';
     
-    // Announce change
+    // Announce change but DON'T move focus
     announceToScreenReader('Chart view active');
     
   } else {
@@ -303,7 +336,7 @@ function switchViewWithoutFocus(view) {
     chartContainer.style.display = 'none';
     legend.style.display = 'none';
     
-    // Announce change
+    // Announce change but DON'T move focus
     announceToScreenReader('Table view active');
   }
 }
@@ -330,15 +363,12 @@ function switchView(view) {
     tableBtn.setAttribute('aria-pressed', 'false');
     
     // Show chart, hide table
-    chartContainer.style.display = 'block';
     tableContainer.style.display = 'none';
+    chartContainer.style.display = 'block';
     legend.style.display = 'flex';
     
     // Announce change
     announceToScreenReader('Chart view active');
-    
-    // Focus chart container
-    focusElement(chartContainer, 100);
     
   } else {
     tableBtn.classList.add('active');
@@ -347,15 +377,12 @@ function switchView(view) {
     chartBtn.setAttribute('aria-pressed', 'false');
     
     // Show table, hide chart
-    tableContainer.style.display = 'block';
     chartContainer.style.display = 'none';
+    tableContainer.style.display = 'block';
     legend.style.display = 'none';
     
     // Announce change
     announceToScreenReader('Table view active');
-    
-    // Focus table
-    focusElement($('#cash-flow-table'), 100);
   }
 }
 
@@ -378,7 +405,7 @@ function handleStateChange(newState) {
   // Update results section
   renderResults(ytmCalculations, {
     bondPrice: newState.bondPrice,
-    couponRate: newState.couponRate,
+    couponPayment: newState.couponPayment,
     years: newState.years,
     faceValue: newState.faceValue
   });
@@ -386,7 +413,7 @@ function handleStateChange(newState) {
   // Update dynamic equation
   renderDynamicEquation(ytmCalculations, {
     bondPrice: newState.bondPrice,
-    couponRate: newState.couponRate,
+    couponPayment: newState.couponPayment,
     years: newState.years,
     faceValue: newState.faceValue
   });
@@ -491,17 +518,17 @@ function runSelfTests() {
   const tests = [
     {
       name: 'Par bond YTM (coupon = YTM)',
-      inputs: { bondPrice: 100, couponRate: 6, years: 5, faceValue: 100, frequency: 2 },
+      inputs: { bondPrice: 100, couponPayment: 6, years: 5, faceValue: 100, frequency: 2 },
       expected: { ytmApprox: 0.06 }
     },
     {
       name: 'Discount bond YTM (price < par)',
-      inputs: { bondPrice: 95, couponRate: 6, years: 5, faceValue: 100, frequency: 2 },
+      inputs: { bondPrice: 95, couponPayment: 6, years: 5, faceValue: 100, frequency: 2 },
       expected: { ytmShouldBe: 'greater than 0.06' }
     },
     {
       name: 'Premium bond YTM (price > par)',
-      inputs: { bondPrice: 105, couponRate: 6, years: 5, faceValue: 100, frequency: 2 },
+      inputs: { bondPrice: 105, couponPayment: 6, years: 5, faceValue: 100, frequency: 2 },
       expected: { ytmShouldBe: 'less than 0.06' }
     }
   ];

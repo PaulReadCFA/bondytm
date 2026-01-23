@@ -17,13 +17,13 @@ const VALIDATION_RULES = {
     prefix: 'USD ',
     helpText: 'Enter a bond price between USD 10 and USD 200'
   },
-  couponRate: {
+  couponPayment: {
     min: 0,
     max: 30,
     required: true,
-    label: 'Coupon rate',
-    unit: '%',
-    helpText: 'Enter an annual coupon rate between 0% and 30%'
+    label: 'Coupon payment',
+    prefix: 'USD ',
+    helpText: 'Enter annual coupon payment between USD 0 and USD 30'
   },
   years: {
     min: 0.5,
