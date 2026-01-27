@@ -64,10 +64,14 @@
 }
 
 .result-title.bond-details {
-  color: var(--color-blue-interactive);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e40af; /* Darker blue for WCAG AA compliance on light blue background */
 }
 
 .result-title.price-comparison {
+  font-size: 1.125rem;
+  font-weight: 600;
   color: var(--color-orange-darker);
 }
 
@@ -86,7 +90,7 @@
 }
 
 .analysis-content {
-  font-size: 0.9375rem;
+  font-size: 0.875rem;  /* Match result-description size */
   color: var(--color-gray-800);
   display: flex;
   flex-direction: column;
@@ -95,7 +99,7 @@
 
 .analysis-type {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.875rem;  /* Consistent with other text */
 }
 
 .analysis-details {
@@ -279,6 +283,12 @@
   position: relative;
 }
 
+/* Focus style for keyboard navigation */
+.equation-container:focus {
+  outline: 2px solid var(--color-blue-interactive);
+  outline-offset: 2px;
+}
+
 /* Hide raw MathML until MathJax processes it */
 .equation-container math {
   visibility: hidden;
@@ -293,23 +303,34 @@
   visibility: visible !important;
 }
 
-/* MathJax wrapper - prevent layout shift for all equations */
+/* MathJax wrapper - prevent layout shift and scrolling on MathJax elements themselves */
 .equation-container .MathJax,
 .equation-container mjx-container {
   font-size: 100% !important;
   margin: 0 auto !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
+  overflow: visible !important; /* Changed from overflow-x: auto - let container handle scrolling */
   display: block !important;
   box-sizing: border-box !important;
   
   /* Initial scale to prevent layout shift when MathJax renders */
   transform: scale(0.9);
   transform-origin: center center;
-  
-  /* Smooth transitions */
   transition: transform 0.2s ease-out;
+}
+
+/* Force MathJax presentation spans to never be scrollable */
+.equation-container .MathJax[role="presentation"],
+.equation-container span.MathJax {
+  overflow: visible !important;
+  max-width: none !important;
+  width: auto !important;
+}
+
+/* Force all descendants of MathJax to never be scrollable */
+.equation-container .MathJax *,
+.equation-container .MathJax[role="presentation"] * {
+  overflow: visible !important;
 }
 
 /* Center the MathML equation itself */

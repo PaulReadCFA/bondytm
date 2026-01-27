@@ -123,13 +123,44 @@ export function renderDynamicEquation(calculations, params) {
   // Trigger MathJax to render the equation
   if (typeof MathJax !== 'undefined' && MathJax.Hub) {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, container], function() {
-      // Remove tabindex from MathJax elements for accessibility
+      // Remove tabindex and overflow from MathJax elements for accessibility
       setTimeout(function() {
-        const mathJaxElements = document.querySelectorAll('.MathJax[tabindex]');
+        const mathJaxElements = document.querySelectorAll('.MathJax');
         mathJaxElements.forEach(function(el) {
           el.removeAttribute('tabindex');
+          // Force remove any inline overflow styles that MathJax might add (use setProperty with important)
+          el.style.setProperty('overflow', 'visible', 'important');
+          el.style.setProperty('overflow-x', 'visible', 'important');
+          el.style.setProperty('overflow-y', 'visible', 'important');
+          el.style.setProperty('max-width', 'none', 'important');
+          
+          // Also fix all child elements that might have overflow
+          const childrenWithOverflow = el.querySelectorAll('*');
+          childrenWithOverflow.forEach(child => {
+            child.style.setProperty('overflow', 'visible', 'important');
+            child.style.setProperty('overflow-x', 'visible', 'important');
+            child.style.setProperty('overflow-y', 'visible', 'important');
+          });
         });
       }, 10);
+      
+      // Run again after a longer delay to catch any late additions
+      setTimeout(function() {
+        const mathJaxElements = document.querySelectorAll('.MathJax');
+        mathJaxElements.forEach(function(el) {
+          el.style.setProperty('overflow', 'visible', 'important');
+          el.style.setProperty('overflow-x', 'visible', 'important');
+          el.style.setProperty('overflow-y', 'visible', 'important');
+          el.style.setProperty('max-width', 'none', 'important');
+          
+          const childrenWithOverflow = el.querySelectorAll('*');
+          childrenWithOverflow.forEach(child => {
+            child.style.setProperty('overflow', 'visible', 'important');
+            child.style.setProperty('overflow-x', 'visible', 'important');
+            child.style.setProperty('overflow-y', 'visible', 'important');
+          });
+        });
+      }, 500);
       
       // AFTER rendering: Release height lock and let boxes resize naturally
       setTimeout(function() {
@@ -144,7 +175,7 @@ export function renderDynamicEquation(calculations, params) {
   }
   
   // Create screen-reader friendly announcement
-  const announcement = `Bond price ${priceFormatted} equals the annuity formula for semiannual coupon payments. ` +
+  const announcement = `Bond purchase price ${priceFormatted} equals the annuity formula for semiannual coupon payments. ` +
     `Semiannual coupon payment ${couponSemiannualFormatted} divided by semiannual rate, ` +
     `times the annuity factor, plus face value ${fvFormatted} discounted to present. ` +
     `Solving for the yield gives yield-to-maturity of ${ytmFormatted} annualized, or ${yFormatted} semiannual.`;

@@ -144,7 +144,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
               }
               
               if (isInitialPeriod && context.dataset.label === 'Principal/Purchase') {
-                return `Bond purchase (PV): ${formatCurrency(value, true)}`;
+                return `Bond purchase price (PV): ${formatCurrency(value, true)}`;
               }
               
               if (context.dataset.label === 'Principal/Purchase' && value > 0) {
@@ -219,12 +219,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         },
         y2: {
           title: {
-            display: true,
-            text: 'Yield-to-maturity (%)',
-            color: COLORS.yield,
-            font: {
-              weight: 600
-            }
+            display: false  // We'll use custom plugin to draw HTML-formatted title
           },
           position: 'right',
           min: 0,
@@ -250,13 +245,67 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
       layout: {
         padding: {
           left: 10,
-          right: 10,
+          right: 65,  // Extra space for vertical y2 axis label
           top: showLabels ? 45 : 15,
           bottom: 10
         }
       }
     },
     plugins: [{
+      id: 'y2AxisTitle',
+      afterDraw: (chart) => {
+        const ctx = chart.ctx;
+        const chartArea = chart.chartArea;
+        
+        ctx.save();
+        ctx.fillStyle = COLORS.yield;
+        
+        // Position to the right of the chart, vertically centered
+        const x = chartArea.right + 50; // More space from chart edge
+        const y = (chartArea.top + chartArea.bottom) / 2; // Vertical center
+        
+        // Rotate 90 degrees (clockwise) for top-to-bottom reading
+        ctx.translate(x, y);
+        ctx.rotate(Math.PI / 2);
+        
+        // Text is now rotated, draw from center
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Measure all parts
+        ctx.font = '600 13px sans-serif';
+        const text1 = 'Yield-to-maturity (';
+        const text3 = ') %';
+        const text1Width = ctx.measureText(text1).width;
+        const text3Width = ctx.measureText(text3).width;
+        
+        ctx.font = 'italic 600 13px sans-serif';
+        const text2 = 'r';
+        const text2Width = ctx.measureText(text2).width;
+        
+        // Calculate total width and starting position (centered)
+        const totalWidth = text1Width + text2Width + text3Width;
+        let textX = -totalWidth / 2;
+        
+        // Draw "Yield-to-maturity ("
+        ctx.font = '600 13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(text1, textX, 0);
+        textX += text1Width;
+        
+        // Draw italic "r"
+        ctx.font = 'italic 600 13px sans-serif';
+        ctx.fillText(text2, textX, 0);
+        textX += text2Width;
+        
+        // Draw ") %"
+        ctx.font = '600 13px sans-serif';
+        ctx.fillText(text3, textX, 0);
+        
+        ctx.restore();
+      }
+    },
+    {
       id: 'stackedBarLabels',
       afterDatasetsDraw: (chart) => {
         if (!showLabels) return;
@@ -310,11 +359,19 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           // Show value labels above all bars (aligned at same height, above FV bar)
           if (Math.abs(total) >= 0.01) {
             ctx.font = 'bold 11px sans-serif';
-            ctx.fillStyle = COLORS.darkText;
+            ctx.fillStyle = '#000000'; // Black for WCAG compliance
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             
-            ctx.fillText(formatCurrency(total, false), x, labelY);
+            // Format without USD prefix
+            const absValue = Math.abs(total);
+            const formatted = absValue.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
+            const label = total < 0 ? `−${formatted}` : formatted;
+            
+            ctx.fillText(label, x, labelY);
           }
         });
         
@@ -375,19 +432,28 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           
           // Format YTM percentage
           const ytmPercent = (ytmBEY * 100).toFixed(2);
-          const text = `r = ${ytmPercent}%`;
           
-          // Measure text for box sizing
+          // Three parts: italic "r", normal " = ", normal percentage
+          const part1 = 'r';
+          const part2 = ' = ';
+          const part3 = `${ytmPercent}%`;
+          
+          // Measure each part
           ctx.font = 'italic bold 11px sans-serif';
-          const metrics = ctx.measureText(text);
-          const textWidth = metrics.width;
+          const part1Width = ctx.measureText(part1).width;
+          
+          ctx.font = 'bold 11px sans-serif';
+          const part2Width = ctx.measureText(part2).width;
+          const part3Width = ctx.measureText(part3).width;
+          
+          const totalWidth = part1Width + part2Width + part3Width;
           const textHeight = 11; // Font size
           
           // Draw white background box with purple border
           const padding = 3;
-          const boxX = x - textWidth / 2 - padding;
+          const boxX = x - totalWidth / 2 - padding;
           const boxY = y - textHeight - padding;
-          const boxWidth = textWidth + padding * 2;
+          const boxWidth = totalWidth + padding * 2;
           const boxHeight = textHeight + padding * 2;
           
           // White background
@@ -399,11 +465,25 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           ctx.lineWidth = 2;
           ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
           
-          // Draw text
+          // Draw text in three parts
           ctx.fillStyle = COLORS.yield;
-          ctx.textAlign = 'center';
           ctx.textBaseline = 'bottom';
-          ctx.fillText(text, x, y);
+          
+          let textX = x - totalWidth / 2;
+          
+          // Draw italic "r"
+          ctx.font = 'italic bold 11px sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(part1, textX, y);
+          textX += part1Width;
+          
+          // Draw normal " = "
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText(part2, textX, y);
+          textX += part2Width;
+          
+          // Draw normal percentage
+          ctx.fillText(part3, textX, y);
           
           ctx.restore();
         }
@@ -524,7 +604,7 @@ function announceDataPoint(cashFlow, total, ytmBEY) {
   }
   
   const isInitialPeriod = cashFlow.period === 0;
-  const principalLabel = isInitialPeriod ? 'Bond purchase (PV)' : 'Principal repayment (FV)';
+  const principalLabel = isInitialPeriod ? 'Bond purchase price (PV)' : 'Principal repayment (FV)';
   
   const announcement = `Time ${cashFlow.timeYears.toFixed(1)} years. ` +
     `Yield-to-maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +

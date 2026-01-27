@@ -40,12 +40,24 @@
     });
     
     function fixAllAriaHiddenElements() {
-      // Fix 1: MathJax visual spans with role="presentation" need proper role for focusability
-      const presentationSpans = document.querySelectorAll('span.MathJax[role="presentation"][tabindex="0"]');
+      // Fix 1: Remove tabindex and overflow from MathJax presentation spans and all descendants
+      const presentationSpans = document.querySelectorAll('span.MathJax');
       presentationSpans.forEach(span => {
-        // Add role="application" for Math Explorer functionality
-        span.setAttribute('role', 'application');
-        span.setAttribute('aria-label', 'Interactive math equation. Press Enter to explore.');
+        // Remove tabindex to prevent keyboard focus issues
+        span.removeAttribute('tabindex');
+        // Force remove any inline overflow styles that MathJax might add
+        span.style.setProperty('overflow', 'visible', 'important');
+        span.style.setProperty('overflow-x', 'visible', 'important');
+        span.style.setProperty('overflow-y', 'visible', 'important');
+        span.style.setProperty('max-width', 'none', 'important');
+        
+        // Also fix all child elements that might have overflow
+        const childrenWithOverflow = span.querySelectorAll('*');
+        childrenWithOverflow.forEach(child => {
+          child.style.setProperty('overflow', 'visible', 'important');
+          child.style.setProperty('overflow-x', 'visible', 'important');
+          child.style.setProperty('overflow-y', 'visible', 'important');
+        });
       });
       
       // Fix 2: Remove aria-label from aria-hidden elements (not allowed)
@@ -69,6 +81,36 @@
         });
       });
     }
+    
+    // Set up MutationObserver to catch MathJax elements as they're created/modified
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.addedNodes.length || mutation.attributeName === 'style') {
+          const mathJaxElements = document.querySelectorAll('.MathJax');
+          mathJaxElements.forEach(function(el) {
+            el.style.setProperty('overflow', 'visible', 'important');
+            el.style.setProperty('overflow-x', 'visible', 'important');
+            el.style.setProperty('overflow-y', 'visible', 'important');
+            el.style.setProperty('max-width', 'none', 'important');
+            
+            const children = el.querySelectorAll('*');
+            children.forEach(child => {
+              child.style.setProperty('overflow', 'visible', 'important');
+              child.style.setProperty('overflow-x', 'visible', 'important');
+              child.style.setProperty('overflow-y', 'visible', 'important');
+            });
+          });
+        }
+      });
+    });
+    
+    // Start observing the document for MathJax changes
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
   <script>
@@ -94,7 +136,7 @@
     <main class="content">
       <!-- Card 0: Static Equation Derivation -->
       <section id="static-equation-card" class="card">
-        <div class="equation-container" role="region" aria-label="General bond valuation formula">
+        <div class="equation-container" role="region" aria-label="General bond valuation formula" tabindex="0">
           <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
             <mrow>
               <msub>
@@ -136,7 +178,7 @@
           Assuming that <span style="color: #3c6ae5;"><strong>PMT</strong></span> and <span style="color: #7a46ff;"><strong><i>r</i></strong></span> are annual values and that a bond pays coupons semiannually, we can modify this expression as follows:
         </p>
         
-        <div class="equation-container" role="region" aria-label="Semiannual bond valuation formula">
+        <div class="equation-container" role="region" aria-label="Semiannual bond valuation formula" tabindex="0">
           <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
             <mrow>
               <msub>
@@ -195,13 +237,13 @@
       
       <!-- Card 1: Dynamic Equation with Your Values -->
       <section id="equation-card" class="card">
-        <h4 class="card-title">Bond Yield to Maturity Equation with Your Values</h4>
+        <h4 class="card-title">Bond Pricing Equation</h4>
         <p class="equation-intro">
           Using the semiannual bond valuation formula with your specific values:
         </p>
         
         <!-- Dynamic equation with actual values -->
-        <div class="equation-container" role="region" aria-label="Bond YTM calculation with your values" aria-live="polite" id="dynamic-equation-container">
+        <div class="equation-container" role="region" aria-label="Bond YTM calculation with your values" aria-live="polite" id="dynamic-equation-container" tabindex="0">
           <div id="dynamic-mathml-equation">
             <!-- Populated by JavaScript -->
           </div>
@@ -235,7 +277,7 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="bond-price" class="input-label-inline">
-                  Bond price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>:
+                  Bond purchase price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>:
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -243,9 +285,9 @@
                     type="number" 
                     id="bond-price" 
                     class="input-field-inline input-with-prefix"
-                    min="10" max="200" step="1" value="97.76"
+                    min="10" max="200" step="0.1" value="97.8"
                     aria-describedby="bond-price-help">
-                  <span class="sr-only" id="bond-price-help">Enter a bond price between USD 10 and USD 200</span>
+                  <span class="sr-only" id="bond-price-help">Enter a bond purchase price between USD 10 and USD 200</span>
                 </div>
               </div>
 
@@ -259,7 +301,7 @@
                     type="number" 
                     id="coupon-payment" 
                     class="input-field-inline input-with-prefix"
-                    min="0" max="30" step="0.5" value="11.00"
+                    min="0" max="30" step="0.1" value="11.0"
                     aria-describedby="coupon-payment-help">
                   <span class="sr-only" id="coupon-payment-help">Enter annual coupon payment between USD 0 and USD 30</span>
                 </div>
@@ -301,7 +343,7 @@
             <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #b95b1d;"></span>
-                Bond purchase <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>
+                Bond purchase price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>
               </span>
               <span class="legend-item" role="listitem">
                 <span class="legend-color" style="background-color: #3c6ae5;"></span>
@@ -363,7 +405,7 @@
                role="region"  
                aria-label="Bond cash flow and yield table"  
                tabindex="-1">
-            <table id="cash-flow-table" class="data-table" aria-label="Bond cash flow table" tabindex="0">
+            <table id="cash-flow-table" class="data-table" aria-label="Bond cash flow table">
               <!-- Populated by JavaScript -->
             </table>
           </div>
