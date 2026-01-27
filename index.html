@@ -20,6 +20,12 @@
       messageStyle: "none",
       skipStartupTypeset: false,
       
+      // Disable MathJax menu to prevent tabindex from being added
+      showMathMenu: false,
+      menuSettings: {
+        zoom: "None"
+      },
+      
       // Process equations quickly to minimize layout shift
       "HTML-CSS": {
         scale: 100,
@@ -85,9 +91,13 @@
     // Set up MutationObserver to catch MathJax elements as they're created/modified
     const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        if (mutation.addedNodes.length || mutation.attributeName === 'style') {
+        if (mutation.addedNodes.length || mutation.attributeName === 'style' || mutation.attributeName === 'tabindex') {
           const mathJaxElements = document.querySelectorAll('.MathJax');
           mathJaxElements.forEach(function(el) {
+            // Remove tabindex for accessibility
+            el.removeAttribute('tabindex');
+            
+            // Fix overflow styles
             el.style.setProperty('overflow', 'visible', 'important');
             el.style.setProperty('overflow-x', 'visible', 'important');
             el.style.setProperty('overflow-y', 'visible', 'important');
@@ -109,8 +119,22 @@
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['style', 'class']
+      attributeFilter: ['style', 'class', 'tabindex']
     });
+    
+    // Periodic cleanup - aggressively remove tabindex every 500ms for the first 5 seconds
+    let cleanupCount = 0;
+    const cleanupInterval = setInterval(function() {
+      const mathJaxElements = document.querySelectorAll('.MathJax[tabindex]');
+      mathJaxElements.forEach(function(el) {
+        el.removeAttribute('tabindex');
+      });
+      
+      cleanupCount++;
+      if (cleanupCount >= 10) {
+        clearInterval(cleanupInterval);
+      }
+    }, 500);
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
   <script>
