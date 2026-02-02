@@ -114,12 +114,15 @@
       });
     });
     
-    // Start observing the document for MathJax changes
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class', 'tabindex']
+    // Wait for DOM to be ready before observing
+    document.addEventListener('DOMContentLoaded', function() {
+      // Start observing the document for MathJax changes
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class', 'tabindex']
+      });
     });
     
     // Periodic cleanup - aggressively remove tabindex every 500ms for the first 5 seconds
@@ -150,6 +153,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+  <noscript>
+    <div style="background: #fef2f2; border: 2px solid #b91c1c; padding: 1rem; margin: 1rem; border-radius: 0.5rem; text-align: center;">
+      <strong>JavaScript Required:</strong> This calculator requires JavaScript to function. Please enable JavaScript in your browser settings.
+    </div>
+  </noscript>
+  
   <div class="container">
     <!-- Skip Links for Accessibility -->
     <nav role="navigation" aria-label="Skip links">
@@ -294,8 +303,8 @@
 
           <!-- Input controls -->
           <div class="input-section">
-            <p class="sr-only" id="inputHelp">
-              Enter values and the calculator updates results and the chart automatically.
+            <p style="font-size: 0.875rem; color: #374151; margin-bottom: 1rem;">
+              Enter your bond details below. The yield-to-maturity calculation and visualizations will update automatically as you change the values.
             </p>
 
             <div class="input-group-inline">

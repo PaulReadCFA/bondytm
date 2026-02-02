@@ -190,7 +190,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         y: {
           title: {
             display: true,
-            text: 'Cash Flows (USD)',
+            text: 'Cash flows (USD)',
             color: COLORS.axisColor,
             font: {
               weight: 600

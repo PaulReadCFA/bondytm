@@ -49,14 +49,14 @@ export function renderDynamicEquation(calculations, params) {
   // Format values for display
   const ytmFormatted = formatPercentage(bondEquivalentYield * 100);
   const priceFormatted = formatCurrency(bondPrice);
-  const couponSemiannualFormatted = formatCurrency(couponPayment); // Per-period (semiannual)
+  const couponAnnualFormatted = formatCurrency(couponPayment * 2); // Annual coupon (2x semiannual)
   const fvFormatted = formatCurrency(faceValue);
   const periodicYield = bondEquivalentYield / 2; // Semiannual
   const yFormatted = formatPercentage(periodicYield * 100);
   
   // Build MathML equation - Annuity formula with semiannual compounding
-  // PV = C/(r/2) × [1 - 1/(1+r/2)^n] + FV/(1+r/2)^n
-  // where C is the semiannual coupon payment, r is the annual yield, n is number of periods
+  // PV = PMT/r × [1 - 1/(1+r/2)^n] + FV/(1+r/2)^n
+  // where PMT is the ANNUAL coupon payment, r is the ANNUAL yield, n is number of periods
   const mathML = `
     <div class="equation-math-wrapper">
       <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
@@ -64,11 +64,8 @@ export function renderDynamicEquation(calculations, params) {
           <mi mathvariant="bold" mathcolor="#b95b1d">${priceFormatted}</mi>
           <mo>=</mo>
           <mfrac linethickness="1.2px">
-            <mi mathvariant="bold" mathcolor="#3c6ae5">${couponSemiannualFormatted}</mi>
-            <mfrac linethickness="1.2px">
-              <mi mathcolor="#7a46ff">r</mi>
-              <mn>2</mn>
-            </mfrac>
+            <mi mathvariant="bold" mathcolor="#3c6ae5">${couponAnnualFormatted}</mi>
+            <mi mathcolor="#7a46ff">r</mi>
           </mfrac>
           <mo>×</mo>
           <mrow>
@@ -175,9 +172,9 @@ export function renderDynamicEquation(calculations, params) {
   }
   
   // Create screen-reader friendly announcement
-  const announcement = `Bond purchase price ${priceFormatted} equals the annuity formula for semiannual coupon payments. ` +
-    `Semiannual coupon payment ${couponSemiannualFormatted} divided by semiannual rate, ` +
-    `times the annuity factor, plus face value ${fvFormatted} discounted to present. ` +
+  const announcement = `Bond purchase price ${priceFormatted} equals the annuity formula. ` +
+    `Annual coupon payment ${couponAnnualFormatted} divided by annual yield rate, ` +
+    `times the annuity factor with semiannual compounding, plus face value ${fvFormatted} discounted to present. ` +
     `Solving for the yield gives yield-to-maturity of ${ytmFormatted} annualized, or ${yFormatted} semiannual.`;
   
   // Update aria-live region for screen readers

@@ -87,17 +87,17 @@ function setupSkipLinks() {
     listen(skipToDataTable, 'click', (e) => {
       e.preventDefault();
       
-      // Switch to table view
-      switchView('table');
-      
-      // Focus the table after switching
-      setTimeout(() => {
-        const table = $('#cash-flow-table');
-        if (table) {
-          table.focus();
-          table.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 400);
+      // Click the table view button
+      const tableBtn = $('#table-view-btn');
+      if (tableBtn) {
+        tableBtn.click();
+        
+        // Focus the button after clicking
+        setTimeout(() => {
+          tableBtn.focus();
+          tableBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
     });
   }
 }
