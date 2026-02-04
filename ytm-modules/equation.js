@@ -171,21 +171,6 @@ export function renderDynamicEquation(calculations, params) {
     });
   }
   
-  // Create screen-reader friendly announcement
-  const announcement = `Bond purchase price ${priceFormatted} equals the annuity formula. ` +
-    `Annual coupon payment ${couponAnnualFormatted} divided by annual yield rate, ` +
-    `times the annuity factor with semiannual compounding, plus face value ${fvFormatted} discounted to present. ` +
-    `Solving for the yield gives yield-to-maturity of ${ytmFormatted} annualized, or ${yFormatted} semiannual.`;
-  
-  // Update aria-live region for screen readers
-  let liveRegion = document.getElementById('equation-live-region');
-  if (!liveRegion) {
-    liveRegion = document.createElement('div');
-    liveRegion.id = 'equation-live-region';
-    liveRegion.className = 'sr-only';
-    liveRegion.setAttribute('aria-live', 'polite');
-    liveRegion.setAttribute('aria-atomic', 'true');
-    document.body.appendChild(liveRegion);
-  }
-  liveRegion.textContent = announcement;
+  // No aria-live announcement needed - Results card already announces YTM changes
+  // Screen reader users can explore the equation with virtual cursor if needed
 }
