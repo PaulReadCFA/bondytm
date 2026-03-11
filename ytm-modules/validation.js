@@ -14,24 +14,24 @@ const VALIDATION_RULES = {
     max: 200,
     required: true,
     label: 'Bond price',
-    prefix: 'USD ',
-    helpText: 'Enter a bond price between USD 10 and USD 200'
+    prefix: 'USD',
+    helpText: 'Enter a bond price between USD10 and USD200'
   },
   couponPayment: {
     min: 0,
     max: 30,
     required: true,
     label: 'Coupon payment',
-    prefix: 'USD ',
-    helpText: 'Enter annual coupon payment between USD 0 and USD 30'
+    prefix: 'USD',
+    helpText: 'Enter annual coupon payment between USD0 and USD30'
   },
   years: {
     min: 0.5,
-    max: 30,
+    max: 10,
     step: 0.5,
     required: true,
     label: 'Years to maturity',
-    helpText: 'Enter years to maturity between 0.5 and 30 years'
+    helpText: 'Enter years to maturity between 0.5 and 10 years'
   }
 };
 

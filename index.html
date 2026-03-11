@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bond Yield to Maturity Calculator | CFA Institute</title>
-  <meta name="description" content="Interactive bond yield to maturity calculator demonstrating internal rate of return calculations">
+  <title>Bond Yield-to-Maturity Calculator | CFA Institute</title>
+  <meta name="description" content="Interactive bond yield-to-maturity calculator demonstrating internal rate of return calculations">
   
   <!-- Styles -->
   <link rel="stylesheet" href="cfa-base.css">
@@ -163,7 +163,7 @@
     <!-- Skip Links for Accessibility -->
     <nav role="navigation" aria-label="Skip links">
       <a href="#bond-price" class="skip-link">Skip to data entry</a>
-      <a href="#cash-flow-table" class="skip-link">Skip to data table</a>
+      <a href="#table-container" class="skip-link">Skip to data table</a>
     </nav>
     
     <main class="content">
@@ -174,7 +174,7 @@
             <mrow>
               <msub>
                 <mi mathcolor="#b95b1d">PV</mi>
-                <mtext mathcolor="#b95b1d">Coupon bond</mtext>
+                <mtext mathcolor="#b95b1d" mathvariant="italic">Coupon bond</mtext>
               </msub>
               <mo>=</mo>
               <mfrac linethickness="1.2px">
@@ -216,7 +216,7 @@
             <mrow>
               <msub>
                 <mi mathcolor="#b95b1d">PV</mi>
-                <mtext mathcolor="#b95b1d">Coupon bond</mtext>
+                <mtext mathcolor="#b95b1d" mathvariant="italic">Coupon bond</mtext>
               </msub>
               <mo>=</mo>
               <mfrac linethickness="1.2px">
@@ -287,13 +287,13 @@
 
       <!-- Card 2: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
-        <h4 class="card-title">Bond Yield to Maturity Calculator</h4>
+        <h4 class="card-title">Bond Yield-to-Maturity Calculator</h4>
         <div class="card-content">
           <!-- Static info row -->
           <div class="info-box">
             <div class="info-item">
               <span class="info-label">Face value:</span>
-              <span class="info-value">USD 100.00</span>
+              <span class="info-value">USD100.00</span>
             </div>
             <div class="info-item">
               <span class="info-label">Payment frequency:</span>
@@ -303,14 +303,14 @@
 
           <!-- Input controls -->
           <div class="input-section">
-            <p style="font-size: 0.875rem; color: #374151; margin-bottom: 1rem;">
-              Enter your bond details below. The yield-to-maturity calculation and visualizations will update automatically as you change the values.
+            <p style="color: #374151; margin-bottom: 1rem;">
+              Enter your bond details below. The yield to maturity calculation and visualizations will update automatically as you change the values.
             </p>
 
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="bond-price" class="input-label-inline">
-                  Bond purchase price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>:
+                  Bond purchase price (<span style="color: #b95b1d;">PV<sub><i>Coupon bond</i></sub></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -319,14 +319,15 @@
                     id="bond-price" 
                     class="input-field-inline input-with-prefix"
                     min="10" max="200" step="0.1" value="97.8"
+                    inputmode="decimal"
                     aria-describedby="bond-price-help">
-                  <span class="sr-only" id="bond-price-help">Enter a bond purchase price between USD 10 and USD 200</span>
+                  <span class="sr-only" id="bond-price-help">Enter a bond purchase price between USD10 and USD200</span>
                 </div>
               </div>
 
               <div class="input-inline">
                 <label for="coupon-payment" class="input-label-inline">
-                  Annual coupon payment <span style="color: #3c6ae5;">(C)</span>:
+                  Annual coupon payment (<span style="color: #3c6ae5;">PMT</span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -335,24 +336,26 @@
                     id="coupon-payment" 
                     class="input-field-inline input-with-prefix"
                     min="0" max="30" step="0.1" value="11.0"
+                    inputmode="decimal"
                     aria-describedby="coupon-payment-help">
-                  <span class="sr-only" id="coupon-payment-help">Enter annual coupon payment between USD 0 and USD 30</span>
+                  <span class="sr-only" id="coupon-payment-help">Enter annual coupon payment between USD0 and USD30</span>
                 </div>
               </div>
 
               <div class="input-inline">
                 <label for="years" class="input-label-inline">
-                  Years to maturity <span style="color: #15803d;">(T)</span>:
+                  Years to maturity (<span style="color: #15803d;"><i>T</i></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
                     type="number" 
                     id="years" 
                     class="input-field-inline"
-                    min="0.5" max="30" step="0.5" value="5"
+                    min="0.5" max="10" step="0.5" value="5"
+                    inputmode="decimal"
                     aria-describedby="years-help">
                   <span class="input-suffix-inline">&nbsp;</span>
-                  <span class="sr-only" id="years-help">Enter years to maturity between 0.5 and 30 years, in 0.5 year increments</span>
+                  <span class="sr-only" id="years-help">Enter years to maturity between 0.5 and 10 years, in 0.5 year increments</span>
                 </div>
               </div>
             </div>
@@ -373,24 +376,24 @@
         <div class="card-content">
           <!-- View toggle buttons -->
           <div class="view-controls">
-            <div class="legend" id="chart-legend" role="list" aria-label="Chart legend">
-              <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: #b95b1d;"></span>
-                Bond purchase price <span style="color: #b95b1d;">(PV<sub>Coupon bond</sub>)</span>
+            <nav aria-label="Chart legend" id="chart-legend" class="legend">
+              <span class="legend-item">
+                <span class="legend-color" style="background-color: #b95b1d;" aria-hidden="true"></span>
+                Bond purchase price (<span style="color: #b95b1d;">PV<sub><i>Coupon bond</i></sub></span>)
               </span>
-              <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: #3c6ae5;"></span>
-                Coupon payments <span style="color: #3c6ae5;">(C)</span>
+              <span class="legend-item">
+                <span class="legend-color" style="background-color: #3c6ae5;" aria-hidden="true"></span>
+                Coupon payments (<span style="color: #3c6ae5;">PMT</span>)
               </span>
-              <span class="legend-item" role="listitem">
-                <span class="legend-color" style="background-color: #0079a6;"></span>
-                Principal repayment <span style="color: #0079a6;">(FV)</span>
+              <span class="legend-item">
+                <span class="legend-color" style="background-color: #0079a6;" aria-hidden="true"></span>
+                Principal repayment (<span style="color: #0079a6;">FV</span>)
               </span>
-              <span class="legend-item" role="listitem">
-                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;"></span>
-                Yield-to-maturity <span style="color: #7a46ff;">(<i>r</i>)</span>
+              <span class="legend-item">
+                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;" aria-hidden="true"></span>
+                Yield to maturity (<span style="color: #7a46ff;"><i>r</i></span>)
               </span>
-            </div>
+            </nav>
             
             <div class="button-group" role="group" aria-label="View mode - switch between chart and table">
               <button id="chart-view-btn" class="toggle-btn active" aria-pressed="true">
@@ -413,13 +416,13 @@
               At period 0, the bond purchase price is shown as a negative cash flow (money paid out).
               Then, at each semiannual period, the bond pays a coupon payment shown in blue.
               At the final maturity date, both the last coupon payment and the principal repayment
-              (face value, shown in orange) are received. The dashed green line shows the calculated
-              yield to maturity (YTM) on the right axis.
+              (face value, shown in teal) are received. The dashed purple line shows the calculated
+              yield to maturity on the right axis.
             </p>
             <p>
-              Keyboard navigation: Tab to focus the chart. Use Left and Right arrow keys to move between periods.
+              Keyboard navigation: Use Left and Right arrow keys to move between periods.
               Press Home to jump to the first period, or End to jump to the last period.
-              Each period will announce its time, YTM, coupon payment, principal repayment, and total cash flow.
+              Each period will announce its time, yield to maturity, coupon payment, principal repayment, and total cash flow.
             </p>
           </div>
 
@@ -437,7 +440,7 @@
           <div id="table-container" class="table-wrapper" style="display: none;"
                role="region"  
                aria-label="Bond cash flow and yield table"  
-               tabindex="-1">
+               tabindex="0">
             <table id="cash-flow-table" class="data-table" aria-label="Bond cash flow table">
               <!-- Populated by JavaScript -->
             </table>
@@ -445,10 +448,10 @@
         </div>
       </section>
 
-      <section class="card" id="results-card">
-        <h4 class="card-title">Results and Analysis</h4>
+      <section class="card" id="results-card" aria-labelledby="results-heading">
+        <h4 class="card-title" id="results-heading">Results and Analysis</h4>
         <div class="card-content">
-          <div id="results-content">
+          <div id="results-content" aria-live="polite" aria-atomic="false">
             <!-- Populated by JavaScript -->
           </div>
         </div>

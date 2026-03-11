@@ -67,7 +67,7 @@ function init() {
  */
 function setupSkipLinks() {
   const skipToDataEntry = document.querySelector('a[href="#bond-price"]');
-  const skipToDataTable = document.querySelector('a[href="#cash-flow-table"]');
+  const skipToDataTable = document.querySelector('a[href="#table-container"]');
   
   if (skipToDataEntry) {
     listen(skipToDataEntry, 'click', (e) => {
@@ -255,7 +255,7 @@ function setupViewToggle() {
     // If keyboard activation, focus the table
     if (isKeyboard) {
       setTimeout(() => {
-        const table = $('#cash-flow-table');
+        const table = $('#table-container');
         if (table) {
           table.focus();
         }
@@ -540,25 +540,25 @@ function runSelfTests() {
       if (test.expected.ytmApprox !== undefined) {
         const diff = Math.abs(result.bondEquivalentYield - test.expected.ytmApprox);
         if (diff <= 0.0001) {
-          console.log(`âœ“ ${test.name} passed`);
+          console.log(`✓ ${test.name} passed`);
         } else {
-          console.warn(`âœ— ${test.name} failed: expected ~${test.expected.ytmApprox}, got ${result.bondEquivalentYield}`);
+          console.warn(`✗ ${test.name} failed: expected ~${test.expected.ytmApprox}, got ${result.bondEquivalentYield}`);
         }
       } else if (test.expected.ytmShouldBe === 'greater than 0.06') {
         if (result.bondEquivalentYield > 0.06) {
-          console.log(`âœ“ ${test.name} passed`);
+          console.log(`✓ ${test.name} passed`);
         } else {
-          console.warn(`âœ— ${test.name} failed: YTM should be > 0.06, got ${result.bondEquivalentYield}`);
+          console.warn(`✗ ${test.name} failed: YTM should be > 0.06, got ${result.bondEquivalentYield}`);
         }
       } else if (test.expected.ytmShouldBe === 'less than 0.06') {
         if (result.bondEquivalentYield < 0.06) {
-          console.log(`âœ“ ${test.name} passed`);
+          console.log(`✓ ${test.name} passed`);
         } else {
-          console.warn(`âœ— ${test.name} failed: YTM should be < 0.06, got ${result.bondEquivalentYield}`);
+          console.warn(`✗ ${test.name} failed: YTM should be < 0.06, got ${result.bondEquivalentYield}`);
         }
       }
     } catch (error) {
-      console.error(`âœ— ${test.name} threw error:`, error);
+      console.error(`✗ ${test.name} threw error:`, error);
     }
   });
   

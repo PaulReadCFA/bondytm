@@ -28,21 +28,6 @@ export function renderDynamicEquation(calculations, params) {
     return;
   }
   
-  // BEFORE rendering: Lock the equation container heights to prevent jumping
-  const equationContainers = document.querySelectorAll('.equation-container');
-  const heights = new Map();
-  
-  equationContainers.forEach(box => {
-    // Store the current computed height
-    const currentHeight = box.getBoundingClientRect().height;
-    heights.set(box, currentHeight);
-    // Lock the height temporarily
-    box.style.height = `${currentHeight}px`;
-    box.style.minHeight = `${currentHeight}px`;
-    box.style.maxHeight = `${currentHeight}px`;
-    box.style.overflow = 'hidden';
-  });
-  
   const { bondEquivalentYield, couponPayment, periods } = calculations;
   const { bondPrice, faceValue } = params;
   
@@ -111,7 +96,7 @@ export function renderDynamicEquation(calculations, params) {
       </math>
     </div>
     <div class="equation-explanation">
-      <div>Solving for <span style="color: #7a46ff;"><strong><i>r</i></strong></span> gives: <span style="color: #7a46ff;"><strong>yield-to-maturity</strong></span> = ${ytmFormatted} annualized (${yFormatted} semiannual)</div>
+      <div>Solving iteratively for <span style="color: #7a46ff;"><strong><i>r</i></strong></span> gives: <span style="color: #7a46ff;"><strong>yield to maturity</strong></span> = ${ytmFormatted} annualized (${yFormatted} semiannual)</div>
     </div>
   `;
   
@@ -121,53 +106,21 @@ export function renderDynamicEquation(calculations, params) {
   if (typeof MathJax !== 'undefined' && MathJax.Hub) {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, container], function() {
       // Remove tabindex and overflow from MathJax elements for accessibility
-      setTimeout(function() {
-        const mathJaxElements = document.querySelectorAll('.MathJax');
-        mathJaxElements.forEach(function(el) {
-          el.removeAttribute('tabindex');
-          // Force remove any inline overflow styles that MathJax might add (use setProperty with important)
-          el.style.setProperty('overflow', 'visible', 'important');
-          el.style.setProperty('overflow-x', 'visible', 'important');
-          el.style.setProperty('overflow-y', 'visible', 'important');
-          el.style.setProperty('max-width', 'none', 'important');
-          
-          // Also fix all child elements that might have overflow
-          const childrenWithOverflow = el.querySelectorAll('*');
-          childrenWithOverflow.forEach(child => {
-            child.style.setProperty('overflow', 'visible', 'important');
-            child.style.setProperty('overflow-x', 'visible', 'important');
-            child.style.setProperty('overflow-y', 'visible', 'important');
-          });
+      const mathJaxElements = document.querySelectorAll('.MathJax');
+      mathJaxElements.forEach(function(el) {
+        el.removeAttribute('tabindex');
+        el.style.setProperty('overflow', 'visible', 'important');
+        el.style.setProperty('overflow-x', 'visible', 'important');
+        el.style.setProperty('overflow-y', 'visible', 'important');
+        el.style.setProperty('max-width', 'none', 'important');
+        
+        const childrenWithOverflow = el.querySelectorAll('*');
+        childrenWithOverflow.forEach(child => {
+          child.style.setProperty('overflow', 'visible', 'important');
+          child.style.setProperty('overflow-x', 'visible', 'important');
+          child.style.setProperty('overflow-y', 'visible', 'important');
         });
-      }, 10);
-      
-      // Run again after a longer delay to catch any late additions
-      setTimeout(function() {
-        const mathJaxElements = document.querySelectorAll('.MathJax');
-        mathJaxElements.forEach(function(el) {
-          el.style.setProperty('overflow', 'visible', 'important');
-          el.style.setProperty('overflow-x', 'visible', 'important');
-          el.style.setProperty('overflow-y', 'visible', 'important');
-          el.style.setProperty('max-width', 'none', 'important');
-          
-          const childrenWithOverflow = el.querySelectorAll('*');
-          childrenWithOverflow.forEach(child => {
-            child.style.setProperty('overflow', 'visible', 'important');
-            child.style.setProperty('overflow-x', 'visible', 'important');
-            child.style.setProperty('overflow-y', 'visible', 'important');
-          });
-        });
-      }, 500);
-      
-      // AFTER rendering: Release height lock and let boxes resize naturally
-      setTimeout(function() {
-        equationContainers.forEach(box => {
-          box.style.height = '';
-          box.style.minHeight = '';
-          box.style.maxHeight = '';
-          box.style.overflow = '';
-        });
-      }, 200);
+      });
     });
   }
   

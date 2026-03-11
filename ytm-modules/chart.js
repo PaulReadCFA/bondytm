@@ -40,7 +40,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
   canvas.setAttribute('aria-roledescription', 'interactive chart');
   canvas.setAttribute(
     'aria-label',
-    'Interactive bond cash flow and yield chart showing purchase price, coupon payments, principal repayment, and yield to maturity over time. Press Tab to focus, then use Left and Right arrow keys to navigate between periods. Home goes to first period, End goes to last period.'
+    'Interactive bond cash flow and yield chart showing purchase price, coupon payments, principal repayment, and yield to maturity over time. Use Left and Right arrow keys to navigate between periods. Home goes to first period, End goes to last period.'
   );
 
   const ctx = canvas.getContext('2d');
@@ -70,7 +70,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
       labels: labels,
       datasets: [
         {
-          label: 'Principal/Purchase',
+          label: 'Principal/purchase',
           data: principalData,
           backgroundColor: principalData.map(val => 
             val >= 0 ? COLORS.principal : COLORS.purchase
@@ -81,7 +81,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           order: 1
         },
         {
-          label: 'Coupon payments',
+          label: 'Coupon payments (PMT)',
           data: couponData,
           backgroundColor: COLORS.coupon,
           borderWidth: 0,
@@ -91,7 +91,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         },
         // YTM horizontal line
         ...(ytmBEY !== null ? [{
-          label: 'Yield-to-maturity (r)',
+          label: 'Yield to maturity (𝑟)',
           data: labels.map(() => ytmBEY * 100),
           type: 'line',
           borderColor: COLORS.yield,
@@ -108,6 +108,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? { duration: 0 } : undefined,
       interaction: {
         mode: 'index',
         intersect: false
@@ -139,19 +140,19 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
               const index = context.dataIndex;
               const isInitialPeriod = index === 0;
               
-              if (context.dataset.label === 'Yield-to-maturity (r)') {
-                return `Yield-to-maturity (r): ${formatPercentage(value)}`;
+              if (context.dataset.label === 'Yield to maturity (𝑟)') {
+                return `Yield to maturity (𝑟): ${formatPercentage(value)}`;
               }
               
-              if (isInitialPeriod && context.dataset.label === 'Principal/Purchase') {
+              if (isInitialPeriod && context.dataset.label === 'Principal/purchase') {
                 return `Bond purchase price (PV): ${formatCurrency(value, true)}`;
               }
               
-              if (context.dataset.label === 'Principal/Purchase' && value > 0) {
+              if (context.dataset.label === 'Principal/purchase' && value > 0) {
                 return `Principal repayment (FV): ${formatCurrency(value, true)}`;
               }
-              if (context.dataset.label === 'Coupon payments') {
-                return `Coupon payment (C): ${formatCurrency(value, true)}`;
+              if (context.dataset.label === 'Coupon payments (PMT)') {
+                return `Coupon payment (PMT): ${formatCurrency(value, true)}`;
               }
               
               return `${context.dataset.label}: ${formatCurrency(value, true)}`;
@@ -159,7 +160,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             footer: (context) => {
               const index = context[0].dataIndex;
               const total = totalData[index];
-              if (context[0].dataset.label !== 'Yield-to-maturity (r)') {
+              if (context[0].dataset.label !== 'Yield to maturity (𝑟)') {
                 return `Total: ${formatCurrency(total, true)}`;
               }
               return '';
@@ -174,13 +175,17 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             text: 'Years',
             color: COLORS.axisColor,
             font: {
-              weight: 600
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           ticks: {
             color: COLORS.axisColor,
             font: {
-              weight: 500
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           grid: {
@@ -193,13 +198,14 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             text: 'Cash flows (USD)',
             color: COLORS.axisColor,
             font: {
-              weight: 600
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           position: 'left',
           ticks: {
             callback: function(value) {
-              // Return just the number without USD
               return value.toLocaleString('en-US', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
@@ -210,23 +216,27 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             minRotation: 0,
             color: COLORS.axisColor,
             font: {
-              weight: 500
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           grid: {
-            color: 'rgba(0, 0, 0, 0.05)'
+            color: 'rgba(0, 0, 0, 0.07)',
+            drawOnChartArea: true
           }
         },
         y2: {
           title: {
-            display: false  // We'll use custom plugin to draw HTML-formatted title
+            display: false
           },
           position: 'right',
           min: 0,
           max: ytmBEY ? Math.max(15, (ytmBEY * 100) * 1.3) : 15,
           ticks: {
-            callback: function(value) {
-              // Return just the number without %
+            callback: function(value, index, ticks) {
+              // Remove the highest tick label to avoid visual confusion
+              if (index === ticks.length - 1) return '';
               return value.toFixed(1);
             },
             color: COLORS.yield,
@@ -234,11 +244,16 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             maxRotation: 0,
             minRotation: 0,
             font: {
-              weight: 600
+              size: 13,
+              weight: '600',
+              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
             }
           },
           grid: {
-            display: false
+            drawOnChartArea: false,
+            drawTicks: true,
+            tickLength: 6,
+            color: COLORS.yield
           }
         }
       },
@@ -273,13 +288,13 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         ctx.textBaseline = 'middle';
         
         // Measure all parts
-        ctx.font = '600 13px sans-serif';
-        const text1 = 'Yield-to-maturity (';
+        ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        const text1 = 'Yield to maturity (';
         const text3 = ') %';
         const text1Width = ctx.measureText(text1).width;
         const text3Width = ctx.measureText(text3).width;
         
-        ctx.font = 'italic 600 13px sans-serif';
+        ctx.font = "italic 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         const text2 = 'r';
         const text2Width = ctx.measureText(text2).width;
         
@@ -287,19 +302,19 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         const totalWidth = text1Width + text2Width + text3Width;
         let textX = -totalWidth / 2;
         
-        // Draw "Yield-to-maturity ("
-        ctx.font = '600 13px sans-serif';
+        // Draw "Yield to maturity ("
+        ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         ctx.textAlign = 'left';
         ctx.fillText(text1, textX, 0);
         textX += text1Width;
         
         // Draw italic "r"
-        ctx.font = 'italic 600 13px sans-serif';
+        ctx.font = "italic 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         ctx.fillText(text2, textX, 0);
         textX += text2Width;
         
         // Draw ") %"
-        ctx.font = '600 13px sans-serif';
+        ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         ctx.fillText(text3, textX, 0);
         
         ctx.restore();
@@ -340,7 +355,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           // For period 0 (PV) and final period (FV), show white text on bars
           if (index === 0) {
             // PV - white text on orange bar
-            ctx.font = 'bold 12px sans-serif';
+            ctx.font = "700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -348,7 +363,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             ctx.fillText('PV', x, barMidY);
           } else if (index === cashFlows.length - 1) {
             // FV - white text on teal bar
-            ctx.font = 'bold 12px sans-serif';
+            ctx.font = "700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -358,7 +373,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           
           // Show value labels above all bars (aligned at same height, above FV bar)
           if (Math.abs(total) >= 0.01) {
-            ctx.font = 'bold 11px sans-serif';
+            ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
             ctx.fillStyle = '#000000'; // Black for WCAG compliance
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
@@ -439,15 +454,15 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           const part3 = `${ytmPercent}%`;
           
           // Measure each part
-          ctx.font = 'italic bold 11px sans-serif';
+          ctx.font = "italic 700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
           const part1Width = ctx.measureText(part1).width;
           
-          ctx.font = 'bold 11px sans-serif';
+          ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
           const part2Width = ctx.measureText(part2).width;
           const part3Width = ctx.measureText(part3).width;
           
           const totalWidth = part1Width + part2Width + part3Width;
-          const textHeight = 11; // Font size
+          const textHeight = 13; // Font size
           
           // Draw white background box with purple border
           const padding = 3;
@@ -472,13 +487,13 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           let textX = x - totalWidth / 2;
           
           // Draw italic "r"
-          ctx.font = 'italic bold 11px sans-serif';
+          ctx.font = "italic 700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
           ctx.textAlign = 'left';
           ctx.fillText(part1, textX, y);
           textX += part1Width;
           
           // Draw normal " = "
-          ctx.font = 'bold 11px sans-serif';
+          ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
           ctx.fillText(part2, textX, y);
           textX += part2Width;
           
@@ -607,8 +622,8 @@ function announceDataPoint(cashFlow, total, ytmBEY) {
   const principalLabel = isInitialPeriod ? 'Bond purchase price (PV)' : 'Principal repayment (FV)';
   
   const announcement = `Time ${cashFlow.timeYears.toFixed(1)} years. ` +
-    `Yield-to-maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
-    `Coupon payment (C): ${formatCurrency(cashFlow.couponPayment, true)}. ` +
+    `Yield to maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
+    `Coupon payment (PMT): ${formatCurrency(cashFlow.couponPayment, true)}. ` +
     `${principalLabel}: ${formatCurrency(cashFlow.principalPayment, true)}. ` +
     `Total: ${formatCurrency(total, true)}.`;
   

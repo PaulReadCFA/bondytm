@@ -40,9 +40,8 @@ export function renderResults(calculations, params) {
 function createYTMBox(calculations) {
   const box = createElement('div', { className: 'result-box ytm-result' });
   
-  const title = createElement('h5', { className: 'result-title ytm-result' }, 
-    'Yield-to-maturity (r)'
-  );
+  const title = createElement('h5', { className: 'result-title ytm-result' });
+  title.innerHTML = 'Yield to Maturity (<i>r</i>)';
   box.appendChild(title);
   
   const valueContainer = createElement('div', { className: 'result-value' });
@@ -84,20 +83,14 @@ function createBondDetailsBox(calculations, params) {
   );
   box.appendChild(title);
   
-  const content = createElement('div', { 
-    className: 'analysis-content',
-    'role': 'region',
-    'aria-labelledby': 'bond-details-heading'
-  });
-  
-  title.id = 'bond-details-heading';
+  const content = createElement('div', { className: 'analysis-content' });
   
   // Details list
   const list = createElement('ul', { className: 'model-info-list' });
   
   const items = [
-    { label: 'Coupon (annual)', value: formatCurrency(params.couponPayment) },
-    { label: 'Coupon (semiannual)', value: formatCurrency(calculations.couponPayment) },
+    { label: 'Coupon/PMT (annual)', value: formatCurrency(params.couponPayment) },
+    { label: 'Coupon/PMT (semiannual)', value: formatCurrency(calculations.couponPayment) },
     { label: 'Periods', value: `${calculations.periods} (semiannual)` },
     { label: 'Years', value: params.years.toString() }
   ];
@@ -121,15 +114,11 @@ function createPriceComparisonBox(calculations, params) {
   const box = createElement('div', { className: 'result-box price-comparison' });
   
   const title = createElement('h5', { className: 'result-title price-comparison' }, 
-    'Price vs Par'
+    'Price vs. Par'
   );
   box.appendChild(title);
   
-  const content = createElement('div', { 
-    className: 'analysis-content',
-    'role': 'region',
-    'aria-labelledby': 'price-comparison-heading'
-  });
+  const content = createElement('div', { className: 'analysis-content' });
   
   title.id = 'price-comparison-heading';
   

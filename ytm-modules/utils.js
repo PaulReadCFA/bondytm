@@ -51,7 +51,7 @@ export function formatCurrency(value, signed = false, includePrefix = true) {
     maximumFractionDigits: 2
   });
   
-  const prefix = includePrefix ? 'USD ' : '';
+  const prefix = includePrefix ? 'USD' : '';
   
   if (value < 0) {
     return `−${prefix}${formatted}`;
