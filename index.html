@@ -167,125 +167,7 @@
     </nav>
     
     <main class="content">
-      <!-- Card 0: Static Equation Derivation -->
-      <section id="static-equation-card" class="card">
-        <div class="equation-container" role="region" aria-label="General bond valuation formula" tabindex="0">
-          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-            <mrow>
-              <msub>
-                <mi mathcolor="#b95b1d">PV</mi>
-                <mtext mathcolor="#b95b1d" mathvariant="italic">Coupon bond</mtext>
-              </msub>
-              <mo>=</mo>
-              <mfrac linethickness="1.2px">
-                <mi mathcolor="#3c6ae5">PMT</mi>
-                <mi mathcolor="#7a46ff">r</mi>
-              </mfrac>
-              <mo>×</mo>
-              <mrow>
-                <mo>[</mo>
-                <mn>1</mn>
-                <mo>−</mo>
-                <mfrac linethickness="1.2px">
-                  <mn>1</mn>
-                  <msup>
-                    <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
-                    <mi mathcolor="#15803d">T</mi>
-                  </msup>
-                </mfrac>
-                <mo>]</mo>
-              </mrow>
-              <mo>+</mo>
-              <mfrac linethickness="1.2px">
-                <mi mathcolor="#0079a6">FV</mi>
-                <msup>
-                  <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
-                  <mi mathcolor="#15803d">T</mi>
-                </msup>
-              </mfrac>
-            </mrow>
-          </math>
-        </div>
-        
-        <p class="equation-intro" style="margin-top: 1rem;">
-          Assuming that <span style="color: #3c6ae5;"><strong>PMT</strong></span> and <span style="color: #7a46ff;"><strong><i>r</i></strong></span> are annual values and that a bond pays coupons semiannually, we can modify this expression as follows:
-        </p>
-        
-        <div class="equation-container" role="region" aria-label="Semiannual bond valuation formula" tabindex="0">
-          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-            <mrow>
-              <msub>
-                <mi mathcolor="#b95b1d">PV</mi>
-                <mtext mathcolor="#b95b1d" mathvariant="italic">Coupon bond</mtext>
-              </msub>
-              <mo>=</mo>
-              <mfrac linethickness="1.2px">
-                <mi mathcolor="#3c6ae5">PMT</mi>
-                <mi mathcolor="#7a46ff">r</mi>
-              </mfrac>
-              <mo>×</mo>
-              <mrow>
-                <mo>[</mo>
-                <mn>1</mn>
-                <mo>−</mo>
-                <mfrac linethickness="1.2px">
-                  <mn>1</mn>
-                  <msup>
-                    <mrow>
-                      <mo>(</mo>
-                      <mn>1</mn>
-                      <mo>+</mo>
-                      <mfrac linethickness="1.2px">
-                        <mi mathcolor="#7a46ff">r</mi>
-                        <mn>2</mn>
-                      </mfrac>
-                      <mo>)</mo>
-                    </mrow>
-                    <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
-                  </msup>
-                </mfrac>
-                <mo>]</mo>
-              </mrow>
-              <mo>+</mo>
-              <mfrac linethickness="1.2px">
-                <mi mathcolor="#0079a6">FV</mi>
-                <msup>
-                  <mrow>
-                    <mo>(</mo>
-                    <mn>1</mn>
-                    <mo>+</mo>
-                    <mfrac linethickness="1.2px">
-                      <mi mathcolor="#7a46ff">r</mi>
-                      <mn>2</mn>
-                    </mfrac>
-                    <mo>)</mo>
-                  </mrow>
-                  <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
-                </msup>
-              </mfrac>
-            </mrow>
-          </math>
-        </div>
-      </section>
-      
-      <!-- Card 1: Dynamic Equation with Your Values -->
-      <section id="equation-card" class="card">
-        <h4 class="card-title">Bond Pricing Equation</h4>
-        <p class="equation-intro">
-          Using the semiannual bond valuation formula with your specific values:
-        </p>
-        
-        <!-- Dynamic equation with actual values -->
-        <div class="equation-container" role="region" aria-label="Bond YTM calculation with your values" aria-live="polite" id="dynamic-equation-container" tabindex="0">
-          <div id="dynamic-mathml-equation">
-            <!-- Populated by JavaScript -->
-          </div>
-        </div>
-      </section>
-
-
-
-      <!-- Card 2: Calculator -->
+      <!-- Card 1: Calculator -->
       <section class="card" id="calculator" tabindex="-1">
         <h4 class="card-title">Bond Yield-to-Maturity Calculator</h4>
         <div class="card-content">
@@ -369,6 +251,20 @@
         </div>
       </section>
 
+      <!-- Card 2: Dynamic Equation with Your Values -->
+      <section id="equation-card" class="card">
+        <h4 class="card-title">Bond Pricing Equation</h4>
+        <p class="equation-intro">
+          Using the semiannual bond valuation formula with your specific values:
+        </p>
+
+        <!-- Dynamic equation with actual values -->
+        <div class="equation-container" role="region" aria-label="Bond YTM calculation with your values" aria-live="polite" id="dynamic-equation-container" tabindex="0">
+          <div id="dynamic-mathml-equation">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+      </section>
 
       <!-- Card 3: Visualizer -->
       <section class="card" id="visualizer" tabindex="-1" style="min-height: 650px;">
