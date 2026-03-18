@@ -1,33 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bond Valuation Formula | CFA Institute</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="cfa-base.css">
-  <link rel="stylesheet" href="bond-ytm-specific.css">
+  <link rel="stylesheet" href="cfa-base.css" />
+  <link rel="stylesheet" href="bond-ytm-specific.css" />
 
-  <!-- MathJax for MathML rendering -->
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-      MathML: { extensions: ["content-mathml.js"] },
+      MathML: {
+        extensions: ["content-mathml.js"]
+      },
       showProcessingMessages: false,
       messageStyle: "none",
       showMathMenu: false,
       menuSettings: { zoom: "None" },
-      "HTML-CSS": { scale: 100, minScaleAdjust: 50 }
+      "HTML-CSS": {
+        scale: 100,
+        minScaleAdjust: 50
+      }
     });
 
-    MathJax.Hub.Queue(function () {
-      // Show all rendered equations (they start hidden via CSS)
-      const allMath = document.querySelectorAll('.equation-container math');
-      allMath.forEach(math => { math.style.visibility = 'visible'; });
+    function removeMathJaxTabindex() {
+      document.querySelectorAll(".MathJax, .MathJax_Display, [id^='MathJax-']").forEach(function (el) {
+        el.removeAttribute("tabindex");
+      });
+    }
 
-      // Remove tabindex MathJax adds
-      document.querySelectorAll('span.MathJax').forEach(span => {
-        span.removeAttribute('tabindex');
+    MathJax.Hub.Register.StartupHook("End", function () {
+      MathJax.Hub.Queue(function () {
+        document.querySelectorAll(".equation-container math").forEach(function (math) {
+          math.style.visibility = "visible";
+        });
+
+        removeMathJaxTabindex();
+        setTimeout(removeMathJaxTabindex, 100);
+        setTimeout(removeMathJaxTabindex, 500);
       });
     });
   </script>
@@ -37,7 +47,8 @@
   <div class="container">
     <main>
       <section id="static-equation-card" class="card">
-        <div class="equation-container" role="region" aria-label="General bond valuation formula" tabindex="0">
+
+        <div class="equation-container">
           <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
             <mrow>
               <msub>
@@ -57,7 +68,13 @@
                 <mfrac linethickness="1.2px">
                   <mn>1</mn>
                   <msup>
-                    <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+                    <mrow>
+                      <mo>(</mo>
+                      <mn>1</mn>
+                      <mo>+</mo>
+                      <mi mathcolor="#7a46ff">r</mi>
+                      <mo>)</mo>
+                    </mrow>
                     <mi mathcolor="#15803d">T</mi>
                   </msup>
                 </mfrac>
@@ -67,7 +84,13 @@
               <mfrac linethickness="1.2px">
                 <mi mathcolor="#0079a6">FV</mi>
                 <msup>
-                  <mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi mathcolor="#7a46ff">r</mi><mo>)</mo></mrow>
+                  <mrow>
+                    <mo>(</mo>
+                    <mn>1</mn>
+                    <mo>+</mo>
+                    <mi mathcolor="#7a46ff">r</mi>
+                    <mo>)</mo>
+                  </mrow>
                   <mi mathcolor="#15803d">T</mi>
                 </msup>
               </mfrac>
@@ -76,10 +99,18 @@
         </div>
 
         <p class="equation-intro" style="margin-top: 1rem;">
-          Assuming that <span style="color: #3c6ae5;"><strong>PMT</strong></span> and <span style="color: #7a46ff;"><strong><i>r</i></strong></span> are annual values and that a bond pays coupons semiannually, we can modify this expression as follows:
+          Assuming that
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mstyle mathcolor="#3c6ae5"><mi>PMT</mi></mstyle>
+          </math>
+          and
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mstyle mathcolor="#7a46ff"><mi>r</mi></mstyle>
+          </math>
+          are annual values and that a bond pays coupons semiannually, we can modify this expression as follows:
         </p>
 
-        <div class="equation-container" role="region" aria-label="Semiannual bond valuation formula" tabindex="0">
+        <div class="equation-container">
           <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
             <mrow>
               <msub>
@@ -109,7 +140,10 @@
                       </mfrac>
                       <mo>)</mo>
                     </mrow>
-                    <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
+                    <mrow>
+                      <mn>2</mn>
+                      <mi mathcolor="#15803d">T</mi>
+                    </mrow>
                   </msup>
                 </mfrac>
                 <mo>]</mo>
@@ -128,12 +162,16 @@
                     </mfrac>
                     <mo>)</mo>
                   </mrow>
-                  <mrow><mn>2</mn><mi mathcolor="#15803d">T</mi></mrow>
+                  <mrow>
+                    <mn>2</mn>
+                    <mi mathcolor="#15803d">T</mi>
+                  </mrow>
                 </msup>
               </mfrac>
             </mrow>
           </math>
         </div>
+
       </section>
     </main>
   </div>
