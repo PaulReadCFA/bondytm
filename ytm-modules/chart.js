@@ -40,7 +40,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
   canvas.setAttribute('aria-roledescription', 'interactive chart');
   canvas.setAttribute(
     'aria-label',
-    'Interactive bond cash flow and yield chart showing purchase price, coupon payments, principal repayment, and yield to maturity over time. Use Left and Right arrow keys to navigate between periods. Home goes to first period, End goes to last period.'
+    'Interactive bond cash flow and yield chart showing purchase price, coupon payments, principal repayment, and yield to maturity over time.'
   );
 
   const ctx = canvas.getContext('2d');

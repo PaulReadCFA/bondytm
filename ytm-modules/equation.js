@@ -121,9 +121,16 @@ export function renderDynamicEquation(calculations, params) {
           child.style.setProperty('overflow-y', 'visible', 'important');
         });
       });
+
+      // Update the container's aria-label to include the result so screen reader
+      // users hear something meaningful when tabbing to the equation on first load
+      const equationContainer = document.getElementById('dynamic-equation-container');
+      if (equationContainer) {
+        equationContainer.setAttribute(
+          'aria-label',
+          `Bond pricing equation with your values. Yield to maturity = ${ytmFormatted} annualized (${yFormatted} semiannual).`
+        );
+      }
     });
   }
-  
-  // No aria-live announcement needed - Results card already announces YTM changes
-  // Screen reader users can explore the equation with virtual cursor if needed
 }

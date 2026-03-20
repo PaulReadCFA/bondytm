@@ -13,14 +13,14 @@
       MathML: {
         extensions: ["content-mathml.js"]
       },
-      showProcessingMessages: false,
-      messageStyle: "none",
-      showMathMenu: false,
-      menuSettings: { zoom: "None" },
       "HTML-CSS": {
         scale: 100,
-        minScaleAdjust: 50
-      }
+        minScaleAdjust: 50,
+        linebreaks: { automatic: true }
+      },
+      showProcessingMessages: false,
+      messageStyle: "none",
+      skipStartupTypeset: false
     });
 
     function removeMathJaxTabindex() {
@@ -41,6 +41,7 @@
       });
     });
   </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
 </head>
 <body>
