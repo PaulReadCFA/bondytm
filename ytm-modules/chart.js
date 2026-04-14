@@ -40,7 +40,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
   canvas.setAttribute('aria-roledescription', 'interactive chart');
   canvas.setAttribute(
     'aria-label',
-    'Interactive bond cash flow and yield chart showing purchase price, coupon payments, principal repayment, and yield to maturity over time.'
+    'Interactive bond cash flow and yield chart showing purchase price, coupon payments, principal repayment, and yield-to-maturity over time.'
   );
 
   const ctx = canvas.getContext('2d');
@@ -91,7 +91,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         },
         // YTM horizontal line
         ...(ytmBEY !== null ? [{
-          label: 'Yield to maturity (𝑟)',
+          label: 'Yield-to-maturity (𝑟)',
           data: labels.map(() => ytmBEY * 100),
           type: 'line',
           borderColor: COLORS.yield,
@@ -140,8 +140,8 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
               const index = context.dataIndex;
               const isInitialPeriod = index === 0;
               
-              if (context.dataset.label === 'Yield to maturity (𝑟)') {
-                return `Yield to maturity (𝑟): ${formatPercentage(value)}`;
+              if (context.dataset.label === 'Yield-to-maturity (𝑟)') {
+                return `Yield-to-maturity (𝑟): ${formatPercentage(value)}`;
               }
               
               if (isInitialPeriod && context.dataset.label === 'Principal/purchase') {
@@ -160,7 +160,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             footer: (context) => {
               const index = context[0].dataIndex;
               const total = totalData[index];
-              if (context[0].dataset.label !== 'Yield to maturity (𝑟)') {
+              if (context[0].dataset.label !== 'Yield-to-maturity (𝑟)') {
                 return `Total: ${formatCurrency(total, true)}`;
               }
               return '';
@@ -289,7 +289,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         
         // Measure all parts
         ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
-        const text1 = 'Yield to maturity (';
+        const text1 = 'Yield-to-maturity (';
         const text3 = ') %';
         const text1Width = ctx.measureText(text1).width;
         const text3Width = ctx.measureText(text3).width;
@@ -302,7 +302,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         const totalWidth = text1Width + text2Width + text3Width;
         let textX = -totalWidth / 2;
         
-        // Draw "Yield to maturity ("
+        // Draw "Yield-to-maturity ("
         ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
         ctx.textAlign = 'left';
         ctx.fillText(text1, textX, 0);
@@ -622,7 +622,7 @@ function announceDataPoint(cashFlow, total, ytmBEY) {
   const principalLabel = isInitialPeriod ? 'Bond purchase price (PV)' : 'Principal repayment (FV)';
   
   const announcement = `Time ${cashFlow.timeYears.toFixed(1)} years. ` +
-    `Yield to maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
+    `Yield-to-maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
     `Coupon payment (PMT): ${formatCurrency(cashFlow.couponPayment, true)}. ` +
     `${principalLabel}: ${formatCurrency(cashFlow.principalPayment, true)}. ` +
     `Total: ${formatCurrency(total, true)}.`;

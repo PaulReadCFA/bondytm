@@ -41,7 +41,7 @@ function createYTMBox(calculations) {
   const box = createElement('div', { className: 'result-box ytm-result' });
   
   const title = createElement('h5', { className: 'result-title ytm-result' });
-  title.innerHTML = 'Yield to Maturity (<i>r</i>)';
+  title.innerHTML = 'Yield-to-maturity (<i>r</i>)';
   box.appendChild(title);
   
   const valueContainer = createElement('div', { className: 'result-value' });

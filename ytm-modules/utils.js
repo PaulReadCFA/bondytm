@@ -37,6 +37,33 @@ export function debounce(fn, wait = 300) {
   };
 }
 
+/** Max raw characters for type="number" fields (maxlength is unreliable on number inputs). */
+export const NUMERIC_INPUT_MAX_CHARS = 6;
+
+/** Max characters for comma-formatted currency text fields (principal). */
+export const FORMATTED_NUMERIC_INPUT_MAX_CHARS = 10;
+
+/**
+ * Trim overlong values on number inputs. HTML maxlength is not applied reliably for type="number".
+ * @param {HTMLInputElement} input
+ * @param {number} maxLen
+ */
+export function clampNumericInputLength(input, maxLen) {
+  if (!input || input.value == null || maxLen <= 0) return;
+  const raw = String(input.value);
+  if (raw.length <= maxLen) return;
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  input.value = raw.slice(0, maxLen);
+  if (typeof input.setSelectionRange === 'function') {
+    const pos = Math.min(
+      typeof start === 'number' && typeof end === 'number' ? Math.min(start, end) : maxLen,
+      maxLen
+    );
+    input.setSelectionRange(pos, pos);
+  }
+}
+
 /**
  * Format number as currency
  * @param {number} value - Numeric value

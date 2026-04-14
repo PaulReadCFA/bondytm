@@ -96,7 +96,7 @@ export function renderDynamicEquation(calculations, params) {
       </math>
     </div>
     <div class="equation-explanation">
-      <div>Solving iteratively for <span style="color: #7a46ff;"><strong><i>r</i></strong></span> gives: <span style="color: #7a46ff;"><strong>yield to maturity</strong></span> = ${ytmFormatted} annualized (${yFormatted} semiannual)</div>
+      <div>Solving iteratively for <span style="color: #7a46ff;"><strong><i>r</i></strong></span> gives: <span style="color: #7a46ff;"><strong>yield-to-maturity</strong></span> = ${ytmFormatted} annualized (${yFormatted} semiannual)</div>
     </div>
   `;
   
@@ -128,7 +128,7 @@ export function renderDynamicEquation(calculations, params) {
       if (equationContainer) {
         equationContainer.setAttribute(
           'aria-label',
-          `Bond pricing equation with your values. Yield to maturity = ${ytmFormatted} annualized (${yFormatted} semiannual).`
+          `Bond pricing equation with your values. Yield-to-maturity = ${ytmFormatted} annualized (${yFormatted} semiannual).`
         );
       }
     });

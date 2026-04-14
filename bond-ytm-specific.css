@@ -15,6 +15,10 @@
   --color-ytm-principal: #0079a6;                       /* Teal - FV (principal/face value) */
   --color-ytm-time: var(--color-green-data);            /* #15803d - T (time) */
   --color-ytm-price: var(--color-blue-interactive);     /* #3c6ae5 - Bond price */
+  /* Cash-flow table: darker text for WCAG AA on white backgrounds */
+  --bond-cashflow-text-ytm: #4c1d95;
+  --bond-cashflow-text-pmt: #1e3a8a;
+  --bond-cashflow-text-fv: #115e59;
 }
 
 /* ==========================================================================
@@ -36,7 +40,6 @@
 .view-controls .button-group {
   flex-shrink: 0;
   align-self: flex-start;
-  margin-left: auto;
 }
 
 /* ==========================================================================
@@ -58,21 +61,27 @@
 }
 
 .result-title.ytm-result {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-purple-bold);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .result-title.bond-details {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #1e40af; /* Darker blue for WCAG AA compliance on light blue background */
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .result-title.price-comparison {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-orange-darker);
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .result-value {
@@ -144,6 +153,19 @@
 /* ==========================================================================
    4. INPUT LAYOUT "“ Inline with Labels
    ========================================================================== */
+
+/* Avoid horizontal page scroll when labels + nowrap rows exceed the viewport */
+#calculator .input-section {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+#calculator .validation-summary {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
 .input-group-inline {
   display: flex;
   flex-wrap: wrap;
@@ -262,27 +284,30 @@
   
   .input-inline {
     width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
+    white-space: normal;
+    align-items: flex-start;
+    box-sizing: border-box;
+  }
+  
+  .input-label-inline {
+    min-width: 0;
+    flex: 1 1 100%;
+    max-width: 100%;
+    white-space: normal;
   }
   
   .input-with-suffix-inline {
     width: 100%;
-    max-width: 12rem;
-  }
-  
-  .input-label-inline {
-    min-width: auto;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
 /* ==========================================================================
    5. EQUATION DISPLAY "“ Bond YTM Specific
    ========================================================================== */
-.equation-intro {
-  font-size: 1rem;
-  color: var(--color-gray-600);
-  margin-bottom: 1rem;
-  text-align: left;
-}
 
 .equation-container {
   padding: 1rem;
@@ -306,7 +331,7 @@
 }
 
 /* Focus style for keyboard navigation */
-.equation-container:focus {
+.equation-container:focus-visible {
   outline: 2px solid var(--color-blue-interactive);
   outline-offset: 2px;
 }

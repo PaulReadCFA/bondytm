@@ -171,6 +171,10 @@
       <section class="card" id="calculator" tabindex="-1">
         <h4 class="card-title">Bond Yield-to-Maturity Calculator</h4>
         <div class="card-content">
+          <p class="equation-intro">
+            Enter your bond details below. The yield-to-maturity calculation and visualizations will update automatically as you change the values.
+          </p>
+
           <!-- Static info row -->
           <div class="info-box">
             <div class="info-item">
@@ -185,9 +189,11 @@
 
           <!-- Input controls -->
           <div class="input-section">
-            <p style="color: #374151; margin-bottom: 1rem;">
-              Enter your bond details below. The yield to maturity calculation and visualizations will update automatically as you change the values.
-            </p>
+            <!-- Above inputs so narrow layouts do not reflow rows when the summary appears -->
+            <div id="validation-summary" class="validation-summary" role="alert" style="display: none;">
+              <div class="validation-title">Please correct the following:</div>
+              <ul id="validation-list"></ul>
+            </div>
 
             <div class="input-group-inline">
               <div class="input-inline">
@@ -241,12 +247,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Validation summary -->
-            <div id="validation-summary" class="validation-summary" role="alert" style="display: none;">
-              <div class="validation-title">Please correct the following:</div>
-              <ul id="validation-list"></ul>
-            </div>
           </div>
         </div>
       </section>
@@ -287,7 +287,7 @@
               </span>
               <span class="legend-item">
                 <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;" aria-hidden="true"></span>
-                Yield to maturity (<span style="color: #7a46ff;"><i>r</i></span>)
+                Yield-to-maturity (<span style="color: #7a46ff;"><i>r</i></span>)
               </span>
             </nav>
             
@@ -306,14 +306,14 @@
 
           <!-- Hidden chart description -->
           <div class="sr-only" id="ytm-chart-desc">
-            <h4 id="ytm-chart-title">Bond cash flows and yield to maturity over time</h4>
+            <h4 id="ytm-chart-title">Bond cash flows and yield-to-maturity over time</h4>
             <p>
               This chart displays the complete cash flow timeline for a bond investment.
               At period 0, the bond purchase price is shown as a negative cash flow (money paid out).
               Then, at each semiannual period, the bond pays a coupon payment shown in blue.
               At the final maturity date, both the last coupon payment and the principal repayment
               (face value, shown in teal) are received. The dashed purple line shows the calculated
-              yield to maturity on the right axis.
+              yield-to-maturity on the right axis.
             </p>
           </div>
 

@@ -1,8 +1,8 @@
 /**
- * Bond Yield to Maturity Calculator - Main Entry Point
+ * Bond Yield-to-Maturity Calculator - Main Entry Point
  * CFA Institute - Vanilla JavaScript Implementation
  * 
- * This calculator demonstrates yield to maturity calculations for coupon bonds
+ * This calculator demonstrates yield-to-maturity calculations for coupon bonds
  * using numerical methods (bisection) to solve for the internal rate of return.
  * Built with accessibility (WCAG 2.1 AA) and maintainability in mind.
  */
@@ -21,7 +21,9 @@ import {
   listen, 
   focusElement, 
   announceToScreenReader,
-  debounce
+  debounce,
+  clampNumericInputLength,
+  NUMERIC_INPUT_MAX_CHARS
 } from './ytm-modules/utils.js';
 import { renderChart, shouldShowLabels, destroyChart } from './ytm-modules/chart.js';
 import { renderTable } from './ytm-modules/table.js';
@@ -150,8 +152,12 @@ function setupInputListeners() {
       }
     }, 300);
     
-    listen(input, 'input', debouncedUpdate);
-    listen(input, 'change', debouncedUpdate);
+    const onInput = () => {
+      clampNumericInputLength(input, NUMERIC_INPUT_MAX_CHARS);
+      debouncedUpdate();
+    };
+    listen(input, 'input', onInput);
+    listen(input, 'change', onInput);
   });
 }
 

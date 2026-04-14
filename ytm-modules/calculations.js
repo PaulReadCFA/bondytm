@@ -1,10 +1,10 @@
 /**
  * Bond YTM Calculations Module
- * Pure functions for yield to maturity calculations using numerical methods
+ * Pure functions for yield-to-maturity calculations using numerical methods
  */
 
 /**
- * Calculate bond yield to maturity using bisection method
+ * Calculate bond yield-to-maturity using bisection method
  * 
  * @param {Object} params - Bond parameters
  * @param {number} params.bondPrice - Current bond price
