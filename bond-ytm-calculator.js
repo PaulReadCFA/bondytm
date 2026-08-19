@@ -478,36 +478,37 @@ function setupResizeListener() {
 function handleResponsiveView() {
   const chartBtn = $('#chart-view-btn');
   const tableBtn = $('#table-view-btn');
+  const helper = $('#chart-helper-text');
   const viewportWidth = window.innerWidth;
   const body = document.body;
   
   // At very narrow widths (<= 480px), force table view and disable chart button
   if (viewportWidth <= 480) {
-    console.log('Narrow screen detected, forcing table view');
-    
     body.classList.add('force-table');
     
     if (state.viewMode === 'chart') {
       switchView('table');
     }
     
-    // Disable chart button
     if (chartBtn) {
       chartBtn.disabled = true;
       chartBtn.setAttribute('aria-disabled', 'true');
+      chartBtn.setAttribute('aria-describedby', 'chart-helper-text');
     }
     if (tableBtn) {
       tableBtn.disabled = false;
       tableBtn.removeAttribute('aria-disabled');
     }
+    if (helper) helper.style.display = 'block';
   } else {
-    // Re-enable chart button at wider widths
     body.classList.remove('force-table');
     
     if (chartBtn) {
       chartBtn.disabled = false;
       chartBtn.removeAttribute('aria-disabled');
+      chartBtn.removeAttribute('aria-describedby');
     }
+    if (helper) helper.style.display = 'none';
   }
 }
 

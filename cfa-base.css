@@ -1423,12 +1423,15 @@ kbd {
 
 /* ==========================================================================
    CUSTOM TOOLTIP STYLING
+   Skip empty title="" (JS sometimes left that after clearing a tip).
+   Chart/Table toggles should not use title — use #chart-helper-text when
+   chart is disabled on narrow widths (exemplar / bond pattern).
    ========================================================================== */
-button[title] {
+button[title]:not([title=""]) {
   position: relative;
 }
 
-button[title]:hover::after {
+button[title]:not([title=""]):hover::after {
   content: attr(title);
   position: absolute;
   bottom: calc(100% + 8px);
@@ -1446,7 +1449,7 @@ button[title]:hover::after {
   pointer-events: none;
 }
 
-button[title]:hover::before {
+button[title]:not([title=""]):hover::before {
   content: '';
   position: absolute;
   bottom: calc(100% + 2px);
@@ -1459,7 +1462,7 @@ button[title]:hover::before {
 }
 
 @media (max-width: 640px) {
-  button[title]:hover::after {
+  button[title]:not([title=""]):hover::after {
     white-space: normal;
     max-width: 240px;
     text-align: center;
