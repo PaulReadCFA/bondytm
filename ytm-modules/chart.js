@@ -5,6 +5,17 @@
 
 import { formatCurrency, formatPercentage } from './utils.js';
 
+
+/** Curriculum chart label convention: 13px / 600 / Lato */
+const CHART_FONT = {
+  family: "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  size: 13,
+  weight: '600'
+};
+const CHART_FONT_CSS = `${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+const CHART_FONT_ITALIC_CSS = `italic ${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+
+
 // Bond YTM Colors - Aligned with EE01
 const COLORS = {
   coupon: '#3c6ae5',      // Blue - PMT (coupon payments)
@@ -177,7 +188,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           ticks: {
@@ -185,7 +196,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           grid: {
@@ -200,7 +211,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           position: 'left',
@@ -218,7 +229,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           grid: {
@@ -246,7 +257,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             font: {
               size: 13,
               weight: '600',
-              family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif"
+              family: CHART_FONT.family
             }
           },
           grid: {
@@ -288,13 +299,13 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         ctx.textBaseline = 'middle';
         
         // Measure all parts
-        ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_CSS;
         const text1 = 'Yield-to-maturity (';
         const text3 = ') %';
         const text1Width = ctx.measureText(text1).width;
         const text3Width = ctx.measureText(text3).width;
         
-        ctx.font = "italic 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_ITALIC_CSS;
         const text2 = 'r';
         const text2Width = ctx.measureText(text2).width;
         
@@ -303,18 +314,18 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         let textX = -totalWidth / 2;
         
         // Draw "Yield-to-maturity ("
-        ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_CSS;
         ctx.textAlign = 'left';
         ctx.fillText(text1, textX, 0);
         textX += text1Width;
         
         // Draw italic "r"
-        ctx.font = "italic 600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_ITALIC_CSS;
         ctx.fillText(text2, textX, 0);
         textX += text2Width;
         
         // Draw ") %"
-        ctx.font = "600 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+        ctx.font = CHART_FONT_CSS;
         ctx.fillText(text3, textX, 0);
         
         ctx.restore();
@@ -355,7 +366,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           // For period 0 (PV) and final period (FV), show white text on bars
           if (index === 0) {
             // PV - white text on orange bar
-            ctx.font = "700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+            ctx.font = CHART_FONT_CSS;
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -363,7 +374,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             ctx.fillText('PV', x, barMidY);
           } else if (index === cashFlows.length - 1) {
             // FV - white text on teal bar
-            ctx.font = "700 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+            ctx.font = CHART_FONT_CSS;
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -373,7 +384,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           
           // Show value labels above all bars (aligned at same height, above FV bar)
           if (Math.abs(total) >= 0.01) {
-            ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+            ctx.font = CHART_FONT_CSS;
             ctx.fillStyle = '#000000'; // Black for WCAG compliance
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
@@ -454,10 +465,10 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           const part3 = `${ytmPercent}%`;
           
           // Measure each part
-          ctx.font = "italic 700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+          ctx.font = CHART_FONT_ITALIC_CSS;
           const part1Width = ctx.measureText(part1).width;
           
-          ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+          ctx.font = CHART_FONT_CSS;
           const part2Width = ctx.measureText(part2).width;
           const part3Width = ctx.measureText(part3).width;
           
@@ -487,13 +498,13 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           let textX = x - totalWidth / 2;
           
           // Draw italic "r"
-          ctx.font = "italic 700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+          ctx.font = CHART_FONT_ITALIC_CSS;
           ctx.textAlign = 'left';
           ctx.fillText(part1, textX, y);
           textX += part1Width;
           
           // Draw normal " = "
-          ctx.font = "700 13px -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif";
+          ctx.font = CHART_FONT_CSS;
           ctx.fillText(part2, textX, y);
           textX += part2Width;
           
