@@ -661,3 +661,116 @@ math mo {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+/* ==========================================================================
+   Moved from local cfa-base (Phase 1 unify) — Bond YTM-only overrides
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+}
+
+.card-title {
+  font-family: 'Lato', Georgia, 'Times New Roman', serif;
+  letter-spacing: normal;
+}
+
+.toggle-btn.active,
+.model-btn.active {
+  box-shadow: 0 0 0 2px #000000; /* Black outline for active state */
+}
+
+#view-chart-btn[disabled],
+#view-chart-btn[disabled]:hover,
+#view-chart-btn[disabled]:focus,
+#view-chart-btn[disabled]:active,
+#chart-view-btn[disabled],
+#chart-view-btn[disabled]:hover,
+#chart-view-btn[disabled]:focus,
+#chart-view-btn[disabled]:active {
+  opacity: 0.4 !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  background-color: var(--color-gray-300) !important;
+  color: var(--color-gray-500) !important;
+  border-color: var(--color-gray-300) !important;
+}
+
+@media (max-width: 480px) {
+  .force-table #view-chart-btn,
+  .force-table #view-chart-btn:hover,
+  .force-table #view-chart-btn:focus,
+  .force-table #view-chart-btn:active,
+  .force-table #chart-view-btn,
+  .force-table #chart-view-btn:hover,
+  .force-table #chart-view-btn:focus,
+  .force-table #chart-view-btn:active {
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    background-color: var(--color-gray-300) !important;
+    color: var(--color-gray-500) !important;
+    border-color: var(--color-gray-300) !important;
+  }
+}
+
+.data-table thead th {
+  background-color: white;
+}
+
+/* Custom tooltip styling for buttons */
+button[title] {
+  position: relative;
+}
+
+button[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-gray-900);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+}
+
+button[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-gray-900);
+  z-index: 1001;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  button[title]:hover::after {
+    white-space: normal;
+    max-width: 240px;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  .MathJax,
+  mjx-container {
+    transform: none !important;
+    transition: none !important;
+  }
+}
