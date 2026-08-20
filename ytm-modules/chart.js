@@ -13,7 +13,17 @@ const CHART_FONT = {
   weight: '600'
 };
 const CHART_FONT_CSS = `${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
-const CHART_FONT_ITALIC_CSS = `italic ${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+
+/** Variables are italicised by the Unicode math-italic glyph, not by font-style. */
+const ITALIC_r = '\u{1D45F}'; // 𝑟
+
+/** In pill labels only the variable carries colour; the operator and value stay neutral. */
+const LABEL_TEXT_COLOR = '#374151';
+
+/** Shared pill geometry so every label box has the same breathing space. */
+const LABEL_PAD_X = 8;
+const LABEL_PAD_Y = 5;
+const LABEL_BOX_HEIGHT = CHART_FONT.size + LABEL_PAD_Y * 2;
 
 
 // Bond YTM Colors - Aligned with EE01
@@ -305,8 +315,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         const text1Width = ctx.measureText(text1).width;
         const text3Width = ctx.measureText(text3).width;
         
-        ctx.font = CHART_FONT_ITALIC_CSS;
-        const text2 = 'r';
+        const text2 = ITALIC_r;
         const text2Width = ctx.measureText(text2).width;
         
         // Calculate total width and starting position (centered)
@@ -320,12 +329,10 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         textX += text1Width;
         
         // Draw italic "r"
-        ctx.font = CHART_FONT_ITALIC_CSS;
         ctx.fillText(text2, textX, 0);
         textX += text2Width;
         
         // Draw ") %"
-        ctx.font = CHART_FONT_CSS;
         ctx.fillText(text3, textX, 0);
         
         ctx.restore();
@@ -459,57 +466,49 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           // Format YTM percentage
           const ytmPercent = (ytmBEY * 100).toFixed(2);
           
-          // Three parts: italic "r", normal " = ", normal percentage
-          const part1 = 'r';
+          // Three parts: italic "r" glyph, " = ", percentage
+          const part1 = ITALIC_r;
           const part2 = ' = ';
           const part3 = `${ytmPercent}%`;
           
-          // Measure each part
-          ctx.font = CHART_FONT_ITALIC_CSS;
-          const part1Width = ctx.measureText(part1).width;
-          
           ctx.font = CHART_FONT_CSS;
+          const part1Width = ctx.measureText(part1).width;
           const part2Width = ctx.measureText(part2).width;
           const part3Width = ctx.measureText(part3).width;
           
           const totalWidth = part1Width + part2Width + part3Width;
-          const textHeight = 13; // Font size
           
-          // Draw white background box with purple border
-          const padding = 3;
-          const boxX = x - totalWidth / 2 - padding;
-          const boxY = y - textHeight - padding;
-          const boxWidth = totalWidth + padding * 2;
-          const boxHeight = textHeight + padding * 2;
+          // Draw white background box with purple border, sitting above the line
+          const boxX = x - totalWidth / 2 - LABEL_PAD_X;
+          const boxY = y - LABEL_BOX_HEIGHT;
+          const boxWidth = totalWidth + LABEL_PAD_X * 2;
           
           // White background
           ctx.fillStyle = 'white';
-          ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+          ctx.fillRect(boxX, boxY, boxWidth, LABEL_BOX_HEIGHT);
           
           // Purple border
           ctx.strokeStyle = COLORS.yield;
           ctx.lineWidth = 2;
-          ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+          ctx.strokeRect(boxX, boxY, boxWidth, LABEL_BOX_HEIGHT);
           
           // Draw text in three parts
+          const textY = boxY + LABEL_BOX_HEIGHT / 2;
           ctx.fillStyle = COLORS.yield;
-          ctx.textBaseline = 'bottom';
+          ctx.textBaseline = 'middle';
           
           let textX = x - totalWidth / 2;
           
-          // Draw italic "r"
-          ctx.font = CHART_FONT_ITALIC_CSS;
+          // Draw italic "r" in the yield purple
           ctx.textAlign = 'left';
-          ctx.fillText(part1, textX, y);
+          ctx.fillText(part1, textX, textY);
           textX += part1Width;
           
-          // Draw normal " = "
-          ctx.font = CHART_FONT_CSS;
-          ctx.fillText(part2, textX, y);
+          // Draw neutral " = " and percentage
+          ctx.fillStyle = LABEL_TEXT_COLOR;
+          ctx.fillText(part2, textX, textY);
           textX += part2Width;
-          
-          // Draw normal percentage
-          ctx.fillText(part3, textX, y);
+          ctx.fillText(part3, textX, textY);
           
           ctx.restore();
         }
