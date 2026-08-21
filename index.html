@@ -203,7 +203,7 @@
             <div class="input-group-inline">
               <div class="input-inline">
                 <label for="bond-price" class="input-label-inline">
-                  Bond purchase price (<span style="color: #b95b1d;">PV<sub><i>Coupon bond</i></sub></span>):
+                  Bond purchase price (<span class="label-var-price">PV<sub>Coupon bond</sub></span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -220,7 +220,7 @@
 
               <div class="input-inline">
                 <label for="coupon-payment" class="input-label-inline">
-                  Annual coupon payment (<span style="color: #3c6ae5;">PMT</span>):
+                  Annual coupon payment (<span class="label-var-coupon">PMT</span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <span class="input-prefix-inline">USD</span>
@@ -237,7 +237,7 @@
 
               <div class="input-inline">
                 <label for="years" class="input-label-inline">
-                  Years to maturity (<span style="color: #15803d;"><i>T</i></span>):
+                  Years to maturity (<span class="label-var-term">𝑇</span>):
                 </label>
                 <div class="input-with-suffix-inline">
                   <input 
@@ -247,7 +247,6 @@
                     min="0.5" max="10" step="0.5" value="5"
                     inputmode="decimal"
                     aria-describedby="years-help">
-                  <span class="input-suffix-inline">&nbsp;</span>
                   <span class="sr-only" id="years-help">Enter years to maturity between 0.5 and 10 years, in 0.5 year increments</span>
                 </div>
               </div>
@@ -280,7 +279,7 @@
             <nav aria-label="Chart legend" id="chart-legend" class="legend">
               <span class="legend-item">
                 <span class="legend-color" style="background-color: #b95b1d;" aria-hidden="true"></span>
-                Bond purchase price (<span style="color: #b95b1d;">PV<sub><i>Coupon bond</i></sub></span>)
+                Bond purchase price (<span style="color: #b95b1d;">PV<sub>Coupon bond</sub></span>)
               </span>
               <span class="legend-item">
                 <span class="legend-color" style="background-color: #3c6ae5;" aria-hidden="true"></span>
@@ -292,7 +291,7 @@
               </span>
               <span class="legend-item">
                 <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;" aria-hidden="true"></span>
-                Yield-to-maturity (<span style="color: #7a46ff;"><i>r</i></span>)
+                Yield-to-maturity (<span style="color: #7a46ff;">𝑟</span>)
               </span>
             </nav>
             
@@ -336,11 +335,11 @@
           </div>
 
           <!-- Table container -->
-          <div id="table-container" class="table-wrapper" style="display: none;"
-               role="region"  
-               aria-label="Bond cash flow and yield table"  
+          <div id="table-container" class="table-wrapper table-card-layout" style="display: none;"
+               role="region"
+               aria-label="Bond cash flow and yield table"
                tabindex="0">
-            <table id="cash-flow-table" class="data-table" aria-label="Bond cash flow table">
+            <table id="cash-flow-table" class="data-table">
               <!-- Populated by JavaScript -->
             </table>
           </div>

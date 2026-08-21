@@ -4,15 +4,11 @@
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
+import { getChartTypography } from '../chart-typography.js';
 
-
-/** Curriculum chart label convention: 13px / 600 / Lato */
-const CHART_FONT = {
-  family: "'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-  size: 13,
-  weight: '600'
-};
-const CHART_FONT_CSS = `${CHART_FONT.weight} ${CHART_FONT.size}px ${CHART_FONT.family}`;
+/** Curriculum chart label convention: 13px / 600 / Lato at the 18px design root. */
+const CHART_FONT = { family: '', size: 13, weight: '600' };
+let CHART_FONT_CSS = '';
 
 /** Variables are italicised by the Unicode math-italic glyph, not by font-style. */
 const ITALIC_r = '\u{1D45F}'; // 𝑟
@@ -21,9 +17,20 @@ const ITALIC_r = '\u{1D45F}'; // 𝑟
 const LABEL_TEXT_COLOR = '#374151';
 
 /** Shared pill geometry so every label box has the same breathing space. */
-const LABEL_PAD_X = 8;
-const LABEL_PAD_Y = 5;
-const LABEL_BOX_HEIGHT = CHART_FONT.size + LABEL_PAD_Y * 2;
+let LABEL_PAD_X = 8;
+let LABEL_PAD_Y = 5;
+let LABEL_BOX_HEIGHT = 23;
+
+function syncChartTypography() {
+  const t = getChartTypography('curriculum');
+  CHART_FONT.family = t.font.family;
+  CHART_FONT.size = t.font.size;
+  CHART_FONT.weight = t.font.weight;
+  CHART_FONT_CSS = t.fontCss;
+  LABEL_PAD_X = t.pill.padX;
+  LABEL_PAD_Y = t.pill.padY;
+  LABEL_BOX_HEIGHT = t.pill.boxHeight;
+}
 
 
 // Bond YTM Colors - Aligned with EE01
@@ -48,6 +55,7 @@ let isKeyboardMode = false;
  * @param {number} ytmBEY - Bond equivalent yield (percentage)
  */
 export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
+  syncChartTypography();
   const canvas = document.getElementById('ytm-chart');
   
   if (!canvas) {
@@ -196,7 +204,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             text: 'Years',
             color: COLORS.axisColor,
             font: {
-              size: 13,
+              size: CHART_FONT.size,
               weight: '600',
               family: CHART_FONT.family
             }
@@ -204,7 +212,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
           ticks: {
             color: COLORS.axisColor,
             font: {
-              size: 13,
+              size: CHART_FONT.size,
               weight: '600',
               family: CHART_FONT.family
             }
@@ -219,7 +227,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             text: 'Cash flows (USD)',
             color: COLORS.axisColor,
             font: {
-              size: 13,
+              size: CHART_FONT.size,
               weight: '600',
               family: CHART_FONT.family
             }
@@ -237,7 +245,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             minRotation: 0,
             color: COLORS.axisColor,
             font: {
-              size: 13,
+              size: CHART_FONT.size,
               weight: '600',
               family: CHART_FONT.family
             }
@@ -265,7 +273,7 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
             maxRotation: 0,
             minRotation: 0,
             font: {
-              size: 13,
+              size: CHART_FONT.size,
               weight: '600',
               family: CHART_FONT.family
             }

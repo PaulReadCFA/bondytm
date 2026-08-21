@@ -14,6 +14,7 @@
   --color-ytm-purchase: var(--color-orange-deep);       /* #b95b1d - PV (bond purchase) */
   --color-ytm-principal: #0079a6;                       /* Teal - FV (principal/face value) */
   --color-ytm-time: var(--color-green-data);            /* #15803d - T (time) */
+  --color-ytm-time-text: #15803d;                       /* T - matches chart + MathML equation */
   --color-ytm-price: var(--color-blue-interactive);     /* #3c6ae5 - Bond price */
   /* Cash-flow table: darker text for WCAG AA on white backgrounds */
   --bond-cashflow-text-ytm: #4c1d95;
@@ -151,158 +152,21 @@
 }
 
 /* ==========================================================================
-   4. INPUT LAYOUT "“ Inline with Labels
+   4. INPUT LAYOUT — data entry comes from cfa-base.css
+   Only the label variable colours are YTM-specific.
    ========================================================================== */
+.label-var-price  { color: var(--color-ytm-purchase); }
+.label-var-coupon { color: var(--color-ytm-coupon); }
+.label-var-term   { color: var(--color-ytm-time-text); }
 
-/* Avoid horizontal page scroll when labels + nowrap rows exceed the viewport */
 #calculator .input-section {
   max-width: 100%;
   min-width: 0;
-  overflow-x: hidden;
 }
 
 #calculator .validation-summary {
   margin-top: 0;
   margin-bottom: 0.75rem;
-}
-
-.input-group-inline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1rem;
-}
-
-.input-inline {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  white-space: nowrap;
-}
-
-.input-label-inline {
-  font-size: 0.875rem;
-  color: var(--color-gray-700);
-  min-width: 130px;
-  font-weight: 500;
-}
-
-.input-with-suffix-inline {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 10rem;
-  position: relative;
-}
-
-.input-field-inline {
-  flex: 1;
-  width: 100%;
-  padding: 0.35rem 0.5rem;
-  border: 1px solid #8b93a7;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  text-align: right !important;
-  box-sizing: border-box;
-}
-
-/* Ensure all inline inputs are right-aligned */
-#bond-price,
-#years,
-#coupon-rate {
-  text-align: right !important;
-  direction: ltr;
-}
-
-/* Keep label and input close together for screen magnification users */
-.input-inline {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-  flex-wrap: nowrap;
-}
-
-.input-label-inline {
-  font-size: 0.875rem;
-  color: var(--color-gray-700);
-  min-width: 0;
-  flex-shrink: 0;
-  font-weight: 500;
-}
-
-.input-prefix-inline {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-gray-500);
-  font-weight: 500;
-  font-size: 0.875rem;
-  flex-shrink: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.input-suffix-inline {
-  position: absolute;
-  right: 0.4rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-gray-500);
-  pointer-events: none;
-  width: auto;
-  max-width: 4rem;
-  text-align: right;
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-/* When we have a prefix, ensure proper spacing */
-.input-with-suffix-inline .input-prefix-inline ~ .input-field-inline {
-  padding-left: 0.5rem;
-}
-
-/* When we have a class indicating prefix usage - needs extra padding for USD */
-.input-field-inline.input-with-prefix {
-  padding-left: 4rem;
-  text-align: right !important;
-}
-
-/* Ensure sufficient padding on the right when suffix is present */
-.input-with-suffix-inline .input-field-inline {
-  padding-right: 2rem;
-}
-
-@media (max-width: 640px) {
-  .input-group-inline {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .input-inline {
-    width: 100%;
-    max-width: 100%;
-    flex-wrap: wrap;
-    white-space: normal;
-    align-items: flex-start;
-    box-sizing: border-box;
-  }
-  
-  .input-label-inline {
-    min-width: 0;
-    flex: 1 1 100%;
-    max-width: 100%;
-    white-space: normal;
-  }
-  
-  .input-with-suffix-inline {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
 }
 
 /* ==========================================================================
@@ -626,28 +490,6 @@ math mo {
   color: var(--color-gray-800);
 }
 
-/* ==========================================================================
-   RESPONSIVE TABLE - Bond YTM Specific
-   ========================================================================== */
-
-/* At very narrow widths, adjust font sizes */
-@media (max-width: 480px) {
-  .data-table {
-    font-size: 0.6875rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .data-table {
-    font-size: 0.625rem;
-  }
-  
-  .data-table th,
-  .data-table td {
-    padding: 0.25rem 0.3rem;
-  }
-}
-
 /* Chart note styling */
 .chart-note {
   font-size: 0.75rem;
@@ -714,10 +556,6 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--color-gray-500) !important;
     border-color: var(--color-gray-300) !important;
   }
-}
-
-.data-table thead th {
-  background-color: white;
 }
 
 @media (prefers-reduced-motion: reduce) {

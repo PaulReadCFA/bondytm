@@ -3,7 +3,7 @@
  * Renders accessible data table for bond cash flows and YTM
  */
 
-import { $, formatCurrency, formatPercentage, announceToScreenReader } from './utils.js';
+import { $, formatCurrency, formatPercentage, announceToScreenReader, applyTableRoles } from './utils.js';
 
 /**
  * Render cash flow table
@@ -30,26 +30,28 @@ export function renderTable(cashFlows, ytmBEY) {
     <thead>
       <tr>
         <th scope="col" class="text-left">Period</th>
-        <th scope="col" class="text-left">Time (Years)</th>
-        <th scope="col" class="text-right">Yield-to-maturity <span style="color: var(--bond-cashflow-text-ytm);">(<i>r</i>)</span></th>
-        <th scope="col" class="text-right">Coupon <span style="color: var(--bond-cashflow-text-pmt);">(PMT)</span> (USD)</th>
-        <th scope="col" class="text-right">Principal <span style="color: var(--bond-cashflow-text-fv);">(FV)</span> (USD)</th>
+        <th scope="col" class="text-left table-var-4">Time (years)</th>
+        <th scope="col" class="text-right table-var-3">Yield-to-maturity (𝑟)</th>
+        <th scope="col" class="text-right table-var-2">Coupon (PMT) (USD)</th>
+        <th scope="col" class="text-right table-var-4">Principal (FV) (USD)</th>
         <th scope="col" class="text-right">Total Cash Flow (USD)</th>
       </tr>
     </thead>
 
     <tbody>`;
 
-  // Add a row for every cash-flow
+  // data-label mirrors the column header: it becomes the visible label when the
+  // shared base reflows each row into a card below 768px. cell-value keeps the
+  // value as a single element so it stays on the right of that label.
   cashFlows.forEach((cf, index) => {
     html += `
       <tr>
-        <td class="text-left">${cf.period}</td>
-        <td class="text-left">${cf.timeYears.toFixed(1)}</td>
-        <td class="text-right" style="color: var(--bond-cashflow-text-ytm);">${formatPercentage(ytmPercent)}</td>
-        <td class="text-right" style="color: var(--bond-cashflow-text-pmt);">${formatCurrency(cf.couponPayment, false, false)}</td>
-        <td class="text-right" style="color: var(--bond-cashflow-text-fv);">${formatCurrency(cf.principalPayment, false, false)}</td>
-        <td class="text-right"><strong>${formatCurrency(cf.totalCashFlow, false, false)}</strong></td>
+        <th scope="row" class="text-left" data-label="Period">${cf.period}</th>
+        <td class="text-left" data-label="Time (years)"><span class="cell-value table-var-4">${cf.timeYears.toFixed(1)}</span></td>
+        <td class="text-right" data-label="Yield-to-maturity (𝑟)"><span class="cell-value table-var-3">${formatPercentage(ytmPercent)}</span></td>
+        <td class="text-right" data-label="Coupon (PMT) (USD)"><span class="cell-value table-var-2">${formatCurrency(cf.couponPayment, false, false)}</span></td>
+        <td class="text-right" data-label="Principal (FV) (USD)"><span class="cell-value table-var-4">${formatCurrency(cf.principalPayment, false, false)}</span></td>
+        <td class="text-right" data-label="Total Cash Flow (USD)"><span class="cell-value"><strong>${formatCurrency(cf.totalCashFlow, false, false)}</strong></span></td>
       </tr>`;
   });
 
@@ -59,9 +61,7 @@ export function renderTable(cashFlows, ytmBEY) {
 
   // Inject the HTML
   table.innerHTML = html;
-
-  // Add accessibility attributes
-  table.setAttribute('aria-label', 'Bond cash flow table');
+  applyTableRoles(table);
 
   announceToScreenReader('Table view loaded with bond cash flows.');
   
@@ -72,12 +72,12 @@ export function renderTable(cashFlows, ytmBEY) {
  * Set up Escape key to exit table
  */
 function setupTableKeyboardEscape() {
-  const table = document.getElementById('cash-flow-table');
+  const tableRegion = document.getElementById('table-container');
   
-  if (!table) return;
+  if (!tableRegion) return;
   
-  if (table._escapeListener) {
-    table.removeEventListener('keydown', table._escapeListener);
+  if (tableRegion._escapeListener) {
+    tableRegion.removeEventListener('keydown', tableRegion._escapeListener);
   }
   
   const escapeListener = (e) => {
@@ -91,6 +91,6 @@ function setupTableKeyboardEscape() {
     }
   };
   
-  table._escapeListener = escapeListener;
-  table.addEventListener('keydown', escapeListener);
+  tableRegion._escapeListener = escapeListener;
+  tableRegion.addEventListener('keydown', escapeListener);
 }
