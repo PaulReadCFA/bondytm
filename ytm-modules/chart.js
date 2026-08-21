@@ -4,7 +4,7 @@
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
-import { getChartTypography } from '../chart-typography.js';
+import { getChartTypography, fillTightParenVar } from '../chart-typography.js';
 
 /** Curriculum chart label convention: 13px / 600 / Lato at the 18px design root. */
 const CHART_FONT = { family: '', size: 13, weight: '600' };
@@ -311,37 +311,9 @@ export function renderChart(cashFlows, showLabels = true, ytmBEY = null) {
         // Rotate 90 degrees (clockwise) for top-to-bottom reading
         ctx.translate(x, y);
         ctx.rotate(Math.PI / 2);
-        
-        // Text is now rotated, draw from center
-        ctx.textAlign = 'center';
+        ctx.font = CHART_FONT_CSS;
         ctx.textBaseline = 'middle';
-        
-        // Measure all parts
-        ctx.font = CHART_FONT_CSS;
-        const text1 = 'Yield-to-maturity (';
-        const text3 = ') %';
-        const text1Width = ctx.measureText(text1).width;
-        const text3Width = ctx.measureText(text3).width;
-        
-        const text2 = ITALIC_r;
-        const text2Width = ctx.measureText(text2).width;
-        
-        // Calculate total width and starting position (centered)
-        const totalWidth = text1Width + text2Width + text3Width;
-        let textX = -totalWidth / 2;
-        
-        // Draw "Yield-to-maturity ("
-        ctx.font = CHART_FONT_CSS;
-        ctx.textAlign = 'left';
-        ctx.fillText(text1, textX, 0);
-        textX += text1Width;
-        
-        // Draw italic "r"
-        ctx.fillText(text2, textX, 0);
-        textX += text2Width;
-        
-        // Draw ") %"
-        ctx.fillText(text3, textX, 0);
+        fillTightParenVar(ctx, 'Yield-to-maturity (', ITALIC_r, ') %', 0, 0, 'center');
         
         ctx.restore();
       }
