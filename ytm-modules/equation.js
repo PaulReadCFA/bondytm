@@ -70,7 +70,7 @@ export function renderDynamicEquation(calculations, params) {
                   </mfrac>
                   <mo>)</mo>
                 </mrow>
-                <mn mathcolor="#15803d">${periods}</mn>
+                <mn mathcolor="#07514F">${periods}</mn>
               </msup>
             </mfrac>
             <mo>]</mo>
@@ -89,7 +89,7 @@ export function renderDynamicEquation(calculations, params) {
                 </mfrac>
                 <mo>)</mo>
               </mrow>
-              <mn mathcolor="#15803d">${periods}</mn>
+              <mn mathcolor="#07514F">${periods}</mn>
             </msup>
           </mfrac>
         </mrow>

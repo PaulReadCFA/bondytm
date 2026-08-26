@@ -9,7 +9,7 @@
   <!-- Google Fonts: Lato (was @import in local cfa-base; load via link for shared master) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="cfa-base.css">
@@ -173,8 +173,8 @@
     
     <main class="content">
       <!-- Card 1: Calculator -->
-      <section class="card" id="calculator" tabindex="-1">
-        <h4 class="card-title">Bond Yield-to-Maturity Calculator</h4>
+      <section class="card" id="calculator" tabindex="-1" aria-labelledby="calculator-title">
+        <h4 class="card-title" id="calculator-title">Bond Yield-to-Maturity Calculator</h4>
         <div class="card-content">
           <p class="equation-intro">
             Enter your bond details below. The yield-to-maturity calculation and visualizations will update automatically as you change the values.
@@ -255,8 +255,8 @@
       </section>
 
       <!-- Card 2: Dynamic Equation with Your Values -->
-      <section id="equation-card" class="card">
-        <h4 class="card-title">Bond Pricing Equation</h4>
+      <section id="equation-card" class="card" aria-labelledby="equation-title">
+        <h4 class="card-title" id="equation-title">Bond Pricing Equation</h4>
         <p class="equation-intro">
           Using the semiannual bond valuation formula with your specific values:
         </p>
@@ -270,27 +270,27 @@
       </section>
 
       <!-- Card 3: Visualizer -->
-      <section class="card" id="visualizer" tabindex="-1" style="min-height: 650px;">
-        <h4 class="card-title">Bond Cash Flow and Yield Analysis</h4>
+      <section class="card" id="visualizer" tabindex="-1" aria-labelledby="visualizer-title">
+        <h4 class="card-title" id="visualizer-title">Bond Cash Flow and Yield Analysis</h4>
         <div class="card-content">
           <!-- View toggle buttons -->
           <div class="view-controls">
             <nav aria-label="Chart legend" id="chart-legend" class="legend">
               <span class="legend-item">
-                <span class="legend-color" style="background-color: #b95b1d;" aria-hidden="true"></span>
-                Bond purchase price <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #b95b1d;">PV<sub>Coupon bond</sub></span><span class="legend-paren">)</span></span>
+                <span class="legend-color legend-swatch-purchase" aria-hidden="true"></span>
+                Bond purchase price <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-purchase">PV<sub>Coupon bond</sub></span><span class="legend-paren">)</span></span>
               </span>
               <span class="legend-item">
-                <span class="legend-color" style="background-color: #3c6ae5;" aria-hidden="true"></span>
-                Coupon payments <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #3c6ae5;">PMT</span><span class="legend-paren">)</span></span>
+                <span class="legend-color legend-swatch-coupon" aria-hidden="true"></span>
+                Coupon payments <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-coupon">PMT</span><span class="legend-paren">)</span></span>
               </span>
               <span class="legend-item">
-                <span class="legend-color" style="background-color: #0079a6;" aria-hidden="true"></span>
-                Principal repayment <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #0079a6;">FV</span><span class="legend-paren">)</span></span>
+                <span class="legend-color legend-swatch-principal" aria-hidden="true"></span>
+                Principal repayment <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-principal">FV</span><span class="legend-paren">)</span></span>
               </span>
               <span class="legend-item">
-                <span class="legend-color legend-dashed-line" style="border-bottom: 2px dashed #7a46ff; background: none; width: 1.5rem; height: 0; border-left: none; border-right: none; border-top: none;" aria-hidden="true"></span>
-                Yield-to-maturity <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var" style="color: #7a46ff;">𝑟</span><span class="legend-paren">)</span></span>
+                <span class="legend-color legend-dashed-line legend-line-yield" aria-hidden="true"></span>
+                Yield-to-maturity <span class="legend-var-wrap"><span class="legend-paren">(</span><span class="legend-var legend-var-yield">𝑟</span><span class="legend-paren">)</span></span>
               </span>
             </nav>
             

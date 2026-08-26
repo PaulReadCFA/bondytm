@@ -39,7 +39,7 @@ const COLORS = {
   principal: '#0079a6',   // Teal - FV (face value/principal)
   purchase: '#b95b1d',    // Orange - PV (bond purchase)
   yield: '#7a46ff',       // Purple - r (yield/rate)
-  time: '#15803d',        // Green - T (time)
+  time: '#07514F',        // Green - T (time)
   darkText: '#06005a',
   axisColor: '#374151'    // Darker gray for axes
 };

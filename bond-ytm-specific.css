@@ -13,34 +13,13 @@
   --color-ytm-coupon: var(--color-blue-interactive);    /* #3c6ae5 - PMT (coupon payments) */
   --color-ytm-purchase: var(--color-orange-deep);       /* #b95b1d - PV (bond purchase) */
   --color-ytm-principal: #0079a6;                       /* Teal - FV (principal/face value) */
-  --color-ytm-time: var(--color-green-data);            /* #15803d - T (time) */
-  --color-ytm-time-text: #15803d;                       /* T - matches chart + MathML equation */
+  --color-ytm-time: var(--color-green-data);            /* #07514F - T (time) */
+  --color-ytm-time-text: var(--color-ytm-time);                       /* T - matches chart + MathML equation */
   --color-ytm-price: var(--color-blue-interactive);     /* #3c6ae5 - Bond price */
   /* Cash-flow table: darker text for WCAG AA on white backgrounds */
   --bond-cashflow-text-ytm: #4c1d95;
   --bond-cashflow-text-pmt: #1e3a8a;
   --bond-cashflow-text-fv: #115e59;
-}
-
-/* ==========================================================================
-   VIEW CONTROLS - Keep buttons in fixed position
-   ========================================================================== */
-.view-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.view-controls .legend {
-  flex: 1;
-  min-height: 2rem;
-}
-
-.view-controls .button-group {
-  flex-shrink: 0;
-  align-self: flex-start;
 }
 
 /* ==========================================================================
@@ -95,7 +74,7 @@
 .result-value-small {
   font-size: 1rem;
   color: var(--color-gray-700);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Lato', sans-serif;
   font-weight: 400;
 }
 
@@ -158,6 +137,21 @@
 .label-var-price  { color: var(--color-ytm-purchase); }
 .label-var-coupon { color: var(--color-ytm-coupon); }
 .label-var-term   { color: var(--color-ytm-time-text); }
+
+.legend-swatch-purchase { background-color: var(--color-ytm-purchase); }
+.legend-swatch-coupon { background-color: var(--color-ytm-coupon); }
+.legend-swatch-principal { background-color: var(--color-ytm-principal); }
+.legend-var-purchase { color: var(--color-ytm-purchase); }
+.legend-var-coupon { color: var(--color-ytm-coupon); }
+.legend-var-principal { color: var(--color-ytm-principal); }
+.legend-var-yield { color: var(--color-ytm-yield); }
+.legend-line-yield {
+  width: 1.5rem;
+  height: 0;
+  background: none;
+  border: 0;
+  border-bottom: 2px dashed var(--color-ytm-yield);
+}
 
 #calculator .input-section {
   max-width: 100%;
@@ -510,52 +504,6 @@ math mo {
 
 h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
-}
-
-.card-title {
-  font-family: 'Lato', Georgia, 'Times New Roman', serif;
-  letter-spacing: normal;
-}
-
-.toggle-btn.active,
-.model-btn.active {
-  box-shadow: 0 0 0 2px #000000; /* Black outline for active state */
-}
-
-#view-chart-btn[disabled],
-#view-chart-btn[disabled]:hover,
-#view-chart-btn[disabled]:focus,
-#view-chart-btn[disabled]:active,
-#chart-view-btn[disabled],
-#chart-view-btn[disabled]:hover,
-#chart-view-btn[disabled]:focus,
-#chart-view-btn[disabled]:active {
-  opacity: 0.4 !important;
-  pointer-events: none !important;
-  cursor: not-allowed !important;
-  box-shadow: none !important;
-  background-color: var(--color-gray-300) !important;
-  color: var(--color-gray-500) !important;
-  border-color: var(--color-gray-300) !important;
-}
-
-@media (max-width: 480px) {
-  .force-table #view-chart-btn,
-  .force-table #view-chart-btn:hover,
-  .force-table #view-chart-btn:focus,
-  .force-table #view-chart-btn:active,
-  .force-table #chart-view-btn,
-  .force-table #chart-view-btn:hover,
-  .force-table #chart-view-btn:focus,
-  .force-table #chart-view-btn:active {
-    opacity: 0.4 !important;
-    pointer-events: none !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
-    background-color: var(--color-gray-300) !important;
-    color: var(--color-gray-500) !important;
-    border-color: var(--color-gray-300) !important;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
