@@ -29,6 +29,13 @@ import { renderChart, shouldShowLabels, destroyChart } from './ytm-modules/chart
 import { renderTable } from './ytm-modules/table.js';
 import { renderResults } from './ytm-modules/results.js';
 import { renderDynamicEquation } from './ytm-modules/equation.js';
+import { allFinite } from './validation-ui.js';
+import {
+  applyChartTableVisibility,
+  updateToggleButtonStates,
+  announceView,
+  VIEW_ANNOUNCEMENTS,
+} from './view-toggle.js';
 
 // =============================================================================
 // INITIALIZATION
@@ -150,6 +157,9 @@ function setupInputListeners() {
       // Recalculate if no errors
       if (!hasErrors(errors)) {
         updateCalculations();
+      } else {
+        setState({ ytmCalculations: null });
+        clearCalculatedViews();
       }
     }, 300);
     
@@ -184,6 +194,15 @@ function updateCalculations() {
       faceValue,
       frequency
     });
+    if (!allFinite(
+      calculations.yieldPerPeriod,
+      calculations.bondEquivalentYield,
+      calculations.effectiveAnnualYield
+    )) {
+      setState({ ytmCalculations: null });
+      clearCalculatedViews();
+      return;
+    }
     
     // Update state with calculations
     setState({ ytmCalculations: calculations });
@@ -334,38 +353,18 @@ function switchViewWithoutFocus(view) {
   const tableContainer = $('#table-container');
   const legend = $('#chart-legend');
   
-  // Update state
+  const changed = state.viewMode !== view;
   setState({ viewMode: view });
-  
-  // Update button states
-  if (view === 'chart') {
-    chartBtn.classList.add('active');
-    chartBtn.setAttribute('aria-pressed', 'true');
-    tableBtn.classList.remove('active');
-    tableBtn.setAttribute('aria-pressed', 'false');
-    
-    // Show chart, hide table
-    chartContainer.style.display = 'block';
-    tableContainer.style.display = 'none';
-    legend.style.display = 'flex';
-    
-    // Announce change but DON'T move focus
-    announceToScreenReader('Chart view active');
-    
-  } else {
-    tableBtn.classList.add('active');
-    tableBtn.setAttribute('aria-pressed', 'true');
-    chartBtn.classList.remove('active');
-    chartBtn.setAttribute('aria-pressed', 'false');
-    
-    // Show table, hide chart
-    tableContainer.style.display = 'block';
-    chartContainer.style.display = 'none';
-    legend.style.display = 'none';
-    
-    // Announce change but DON'T move focus
-    announceToScreenReader('Table view active');
-  }
+  const forceTable = document.body.classList.contains('force-table');
+  updateToggleButtonStates({ chartBtn, tableBtn, showingChart: view === 'chart', forceTable });
+  applyChartTableVisibility({
+    chartEl: chartContainer,
+    tableEl: tableContainer,
+    canvas: $('#ytm-chart'),
+    showChart: view === 'chart',
+  });
+  if (legend) legend.style.display = view === 'chart' ? 'flex' : 'none';
+  if (changed) announceView(VIEW_ANNOUNCEMENTS[view]);
 }
 
 /**
@@ -379,38 +378,18 @@ function switchView(view) {
   const tableContainer = $('#table-container');
   const legend = $('#chart-legend');
   
-  // Update state
+  const changed = state.viewMode !== view;
   setState({ viewMode: view });
-  
-  // Update button states
-  if (view === 'chart') {
-    chartBtn.classList.add('active');
-    chartBtn.setAttribute('aria-pressed', 'true');
-    tableBtn.classList.remove('active');
-    tableBtn.setAttribute('aria-pressed', 'false');
-    
-    // Show chart, hide table
-    tableContainer.style.display = 'none';
-    chartContainer.style.display = 'block';
-    legend.style.display = 'flex';
-    
-    // Announce change
-    announceToScreenReader('Chart view active');
-    
-  } else {
-    tableBtn.classList.add('active');
-    tableBtn.setAttribute('aria-pressed', 'true');
-    chartBtn.classList.remove('active');
-    chartBtn.setAttribute('aria-pressed', 'false');
-    
-    // Show table, hide chart
-    chartContainer.style.display = 'none';
-    tableContainer.style.display = 'block';
-    legend.style.display = 'none';
-    
-    // Announce change
-    announceToScreenReader('Table view active');
-  }
+  const forceTable = document.body.classList.contains('force-table');
+  updateToggleButtonStates({ chartBtn, tableBtn, showingChart: view === 'chart', forceTable });
+  applyChartTableVisibility({
+    chartEl: chartContainer,
+    tableEl: tableContainer,
+    canvas: $('#ytm-chart'),
+    showChart: view === 'chart',
+  });
+  if (legend) legend.style.display = view === 'chart' ? 'flex' : 'none';
+  if (changed) announceView(VIEW_ANNOUNCEMENTS[view]);
 }
 
 // =============================================================================
@@ -531,6 +510,12 @@ function handleResponsiveView() {
     }
     if (helper) helper.style.display = 'none';
   }
+  updateToggleButtonStates({
+    chartBtn,
+    tableBtn,
+    showingChart: state.viewMode === 'chart',
+    forceTable: viewportWidth <= 480,
+  });
 }
 
 // =============================================================================
