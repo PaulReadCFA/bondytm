@@ -539,8 +539,29 @@ function handleResponsiveView() {
 /**
  * Run self-tests to verify calculations
  */
+function logSelfTest(name, passed, detail) {
+  if (passed) console.log(`✓ ${name}`);
+  else console.warn(`✗ ${name}${detail ? ': ' + detail : ''}`);
+}
+
 function runSelfTests() {
   console.log('Running self-tests...');
+
+  const defaults = calculateBondYTMMetrics({
+    bondPrice: 97.8, couponPayment: 11, years: 5, faceValue: 100, frequency: 2
+  });
+  logSelfTest(
+    'Defaults → BEY ≈ 11.59%',
+    Math.abs(defaults.bondEquivalentYield - 0.1159) < 0.0005,
+    `got ${defaults.bondEquivalentYield}`
+  );
+  logSelfTest('Valid outputs are finite', Number.isFinite(defaults.bondEquivalentYield));
+
+  const empty = validateAllInputs({ bondPrice: NaN, couponPayment: 11, years: 5 });
+  logSelfTest('Empty bond price is required', Boolean(empty.bondPrice));
+
+  const range = validateAllInputs({ bondPrice: 5, couponPayment: 11, years: 5 });
+  logSelfTest('Price below min is rejected', Boolean(range.bondPrice));
   
   const tests = [
     {
