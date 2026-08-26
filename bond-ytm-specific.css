@@ -180,14 +180,14 @@
   border: 1px solid var(--color-gray-200);
   border-radius: 0.5rem;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
   container-type: inline-size;
   container-name: equation;
-  /* Fixed height prevents layout shift when MathJax re-renders */
+  /* Reserve height to limit layout shift, but let tall/zoomed maths grow */
   min-height: 160px;
-  height: 160px;
+  height: auto;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -336,13 +336,13 @@ math {
 /* Static equation containers - need more height for larger formulas */
 #static-equation-card .equation-container {
   min-height: 160px;
-  height: 160px;
+  height: auto;
 }
 
-/* Dynamic equation container - fixed height prevents jumping */
+/* Dynamic equation container - reserved height limits jumping, but grows if needed */
 #dynamic-equation-container {
   min-height: 160px;
-  height: 160px;
+  height: auto;
 }
 
 #dynamic-equation-container math {
@@ -358,7 +358,7 @@ math {
   margin: 0 auto !important;
   max-width: 100% !important;
   overflow-x: auto !important;
-  overflow-y: hidden !important;
+  overflow-y: visible !important;
   display: block !important;
   box-sizing: border-box !important;
 }

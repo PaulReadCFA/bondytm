@@ -363,6 +363,7 @@ function switchViewWithoutFocus(view) {
     canvas: $('#ytm-chart'),
     showChart: view === 'chart',
   });
+  syncChartPointAnnouncement(view === 'chart');
   if (legend) legend.style.display = view === 'chart' ? 'flex' : 'none';
   if (changed) announceView(VIEW_ANNOUNCEMENTS[view]);
 }
@@ -388,8 +389,21 @@ function switchView(view) {
     canvas: $('#ytm-chart'),
     showChart: view === 'chart',
   });
+  syncChartPointAnnouncement(view === 'chart');
   if (legend) legend.style.display = view === 'chart' ? 'flex' : 'none';
   if (changed) announceView(VIEW_ANNOUNCEMENTS[view]);
+}
+
+function syncChartPointAnnouncement(showingChart) {
+  const region = $('#chart-point-announcement');
+  if (!region) return;
+  if (showingChart) {
+    region.textContent = '';
+    region.removeAttribute('aria-hidden');
+  } else {
+    region.setAttribute('aria-hidden', 'true');
+    region.textContent = '';
+  }
 }
 
 // =============================================================================

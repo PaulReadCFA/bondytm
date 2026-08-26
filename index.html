@@ -191,7 +191,6 @@
               <span class="info-value">Semiannual</span>
             </div>
           </div>
-
           <!-- Input controls -->
           <div class="input-section">
             <!-- Above inputs so narrow layouts do not reflow rows when the summary appears -->
@@ -326,6 +325,10 @@
               yield-to-maturity on the right axis.
             </p>
           </div>
+          <p id="chart-keyboard-help" class="sr-only">
+            Use Left and Right arrow keys to move between semiannual periods. Home moves to the first period and End moves to the last period.
+          </p>
+          <p id="chart-point-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></p>
 
           <!-- Chart container -->
           <div id="chart-container" class="chart-wrapper" 
@@ -334,7 +337,9 @@
                aria-describedby="ytm-chart-desc"
                tabindex="-1"
                style="overflow: visible;">
-            <canvas id="ytm-chart"></canvas>
+            <canvas id="ytm-chart" role="img"
+                    aria-labelledby="ytm-chart-title"
+                    aria-describedby="ytm-chart-desc chart-keyboard-help"></canvas>
           </div>
 
           <!-- Table container -->
