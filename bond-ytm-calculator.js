@@ -132,6 +132,7 @@ function setupInputListeners() {
       
       // Update state
       const errors = { ...state.errors };
+      delete errors.calculation;
       if (error) {
         errors[field] = error;
       } else {
@@ -170,6 +171,7 @@ function updateCalculations() {
   // Don't calculate if there are validation errors
   if (hasErrors(errors)) {
     setState({ ytmCalculations: null });
+    clearCalculatedViews();
     return;
   }
   
@@ -188,8 +190,27 @@ function updateCalculations() {
     
   } catch (error) {
     console.error('Calculation error:', error);
-    setState({ ytmCalculations: null });
+    const calculationErrors = {
+      ...state.errors,
+      calculation: error.message || 'Unable to calculate yield-to-maturity for these inputs'
+    };
+    setState({ ytmCalculations: null, errors: calculationErrors });
+    updateValidationSummary(calculationErrors);
+    clearCalculatedViews();
   }
+}
+
+function clearCalculatedViews() {
+  destroyChart();
+
+  const results = $('#results-content');
+  if (results) results.innerHTML = '';
+
+  const equation = $('#dynamic-mathml-equation');
+  if (equation) equation.innerHTML = '';
+
+  const table = $('#cash-flow-table');
+  if (table) table.innerHTML = '';
 }
 
 // =============================================================================
@@ -537,6 +558,16 @@ function runSelfTests() {
       name: 'Premium bond YTM (price > par)',
       inputs: { bondPrice: 105, couponPayment: 6, years: 5, faceValue: 100, frequency: 2 },
       expected: { ytmShouldBe: 'less than 0.06' }
+    },
+    {
+      name: 'High zero-coupon price supports negative YTM',
+      inputs: { bondPrice: 200, couponPayment: 0, years: 5, faceValue: 100, frequency: 2 },
+      expected: { ytmShouldBe: 'less than 0' }
+    },
+    {
+      name: 'Low price converges above old fixed yield ceiling',
+      inputs: { bondPrice: 10, couponPayment: 30, years: 10, faceValue: 100, frequency: 2 },
+      expected: { finite: true }
     }
   ];
   
@@ -562,6 +593,18 @@ function runSelfTests() {
           console.log(`✓ ${test.name} passed`);
         } else {
           console.warn(`✗ ${test.name} failed: YTM should be < 0.06, got ${result.bondEquivalentYield}`);
+        }
+      } else if (test.expected.ytmShouldBe === 'less than 0') {
+        if (result.bondEquivalentYield < 0) {
+          console.log(`✓ ${test.name} passed`);
+        } else {
+          console.warn(`✗ ${test.name} failed: YTM should be negative, got ${result.bondEquivalentYield}`);
+        }
+      } else if (test.expected.finite) {
+        if (Number.isFinite(result.bondEquivalentYield)) {
+          console.log(`✓ ${test.name} passed`);
+        } else {
+          console.warn(`✗ ${test.name} failed: YTM should be finite`);
         }
       }
     } catch (error) {

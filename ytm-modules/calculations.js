@@ -43,29 +43,66 @@ export function calculateYTM({ bondPrice, couponPayment, years, faceValue, frequ
     }, 0);
   };
   
-  // Bisection method to find YTM
-  let low = 0;
-  let high = 1.0; // 100% per period as upper bound
+  // Bracket the root before bisection. Negative yields are valid for
+  // sufficiently high bond prices, while very low prices can imply yields
+  // above the old fixed 100%-per-period ceiling.
+  const residual = (yieldPerPeriod) => presentValue(yieldPerPeriod) - bondPrice;
+  let low = -0.999999; // 1 + yield must remain positive
+  let high = 1;
+  let lowResidual = residual(low);
+  let highResidual = residual(high);
+  const maxHigh = 1000000;
+
+  while (highResidual > 0 && high < maxHigh) {
+    high = high * 2 + 1;
+    highResidual = residual(high);
+  }
+
+  if (Number.isNaN(lowResidual) || Number.isNaN(highResidual)
+      || lowResidual < 0 || highResidual > 0) {
+    throw new RangeError('Unable to find a yield consistent with the bond price and cash flows');
+  }
+
   let iterations = 0;
   const maxIterations = 200;
-  const tolerance = 0.0000001;
+  const yieldTolerance = 0.0000000001;
+  const priceTolerance = Math.max(0.00000001, bondPrice * 0.00000001);
   
-  while (iterations < maxIterations && (high - low) > tolerance) {
+  while (iterations < maxIterations && (high - low) > yieldTolerance) {
     const mid = (low + high) / 2;
-    const pv = presentValue(mid);
+    const midResidual = residual(mid);
+
+    if (Number.isNaN(midResidual)) {
+      throw new RangeError('Yield calculation produced a non-finite value');
+    }
+
+    if (Math.abs(midResidual) <= priceTolerance) {
+      low = mid;
+      high = mid;
+      break;
+    }
     
-    if (pv > bondPrice) {
+    if (midResidual > 0) {
       // Price too high, yield too low, increase yield
       low = mid;
+      lowResidual = midResidual;
     } else {
       // Price too low, yield too high, decrease yield
       high = mid;
+      highResidual = midResidual;
     }
     
     iterations++;
   }
   
   const yieldPerPeriod = (low + high) / 2;
+  const finalResidual = residual(yieldPerPeriod);
+
+  if (!Number.isFinite(yieldPerPeriod)
+      || !Number.isFinite(finalResidual)
+      || Math.abs(finalResidual) > priceTolerance * 10) {
+    throw new RangeError('Yield calculation did not converge for these inputs');
+  }
   
   // Convert periodic yield to annual yields
   const bondEquivalentYield = yieldPerPeriod * frequency; // BEY (simple annualization)
