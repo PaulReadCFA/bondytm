@@ -37,13 +37,14 @@
 
 .result-box.price-comparison {
   background-color: var(--color-bg-orange);
-  border-color: var(--color-orange-darker);
+  border-color: var(--color-orange-contrast);
 }
 
+/* Titles sit on 10% tints — use the tint-safe family from cfa-base. */
 .result-title.ytm-result {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-purple-bold);
+  color: var(--color-purple-contrast);
   letter-spacing: normal;
   text-transform: none;
 }
@@ -51,7 +52,7 @@
 .result-title.bond-details {
   font-size: 1rem;
   font-weight: 600;
-  color: #1e40af; /* Darker blue for WCAG AA compliance on light blue background */
+  color: var(--color-blue-contrast);
   letter-spacing: normal;
   text-transform: none;
 }
@@ -59,13 +60,13 @@
 .result-title.price-comparison {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-orange-darker);
+  color: var(--color-orange-contrast);
   letter-spacing: normal;
   text-transform: none;
 }
 
 .result-value {
-  color: var(--color-purple-bold);
+  color: var(--color-purple-contrast);
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
