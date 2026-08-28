@@ -3,7 +3,8 @@
  * Renders accessible data table for bond cash flows and YTM
  */
 
-import { $, formatCurrency, formatPercentage, announceToScreenReader, applyTableRoles } from './utils.js';
+import { $, formatCurrency, formatPercentage, announceToScreenReader } from './utils.js';
+import { applyTableRoles } from '../table-roles.js';
 
 /**
  * Render cash flow table
