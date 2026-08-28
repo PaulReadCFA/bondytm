@@ -86,6 +86,18 @@ export function formatCurrency(value, signed = false, includePrefix = true) {
   return `${prefix}${formatted}`;
 }
 
+/** Spoken money for live regions and aria-labels (not letter-by-letter USD). */
+export function formatCurrencySpeech(value) {
+  if (!Number.isFinite(Number(value))) return '0.00 US dollars';
+  const n = Number(value);
+  const formatted = Math.abs(n).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  const amount = n < 0 ? `\u2212${formatted}` : formatted;
+  return `${amount} US dollars`;
+}
+
 /**
  * Format number as percentage
  * @param {number} value - Numeric value (as percentage, e.g., 5.5 for 5.5%)

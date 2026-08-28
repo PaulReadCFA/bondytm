@@ -23,24 +23,15 @@
       },
       showProcessingMessages: false,
       messageStyle: "none",
+      menuSettings: { explorer: true },
       skipStartupTypeset: false
     });
-
-    function removeMathJaxTabindex() {
-      document.querySelectorAll(".MathJax, .MathJax_Display, [id^='MathJax-']").forEach(function (el) {
-        el.removeAttribute("tabindex");
-      });
-    }
 
     MathJax.Hub.Register.StartupHook("End", function () {
       MathJax.Hub.Queue(function () {
         document.querySelectorAll(".equation-container math").forEach(function (math) {
           math.style.visibility = "visible";
         });
-
-        removeMathJaxTabindex();
-        setTimeout(removeMathJaxTabindex, 100);
-        setTimeout(removeMathJaxTabindex, 500);
       });
     });
   </script>

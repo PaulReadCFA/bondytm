@@ -4,6 +4,7 @@
  */
 
 import { formatCurrency, formatPercentage } from './utils.js';
+import { renderEquation } from '../equation-render.js';
 
 /**
  * Render dynamic equation with user's values
@@ -100,15 +101,13 @@ export function renderDynamicEquation(calculations, params) {
     </div>
   `;
   
-  container.innerHTML = mathML;
-  
-  // Trigger MathJax to render the equation
-  if (typeof MathJax !== 'undefined' && MathJax.Hub) {
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, container], function() {
-      // Remove tabindex and overflow from MathJax elements for accessibility
+  // The shared mount holds the card's height and hides the raw MathML while
+  // MathJax typesets, so the cards below stay put.
+  renderEquation(container, mathML, {
+    onTypeset: function() {
+      // Keep MathJax Explorer's tabindex; only normalize overflow.
       const mathJaxElements = document.querySelectorAll('.MathJax');
       mathJaxElements.forEach(function(el) {
-        el.removeAttribute('tabindex');
         el.style.setProperty('overflow', 'visible', 'important');
         el.style.setProperty('overflow-x', 'visible', 'important');
         el.style.setProperty('overflow-y', 'visible', 'important');
@@ -131,6 +130,6 @@ export function renderDynamicEquation(calculations, params) {
           `Bond pricing equation with your values. Yield-to-maturity = ${ytmFormatted} annualized (${yFormatted} semiannual).`
         );
       }
-    });
-  }
+    },
+  });
 }

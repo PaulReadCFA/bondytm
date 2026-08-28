@@ -3,7 +3,7 @@
  * Chart rendering using Chart.js with keyboard accessibility
  */
 
-import { formatCurrency, formatPercentage } from './utils.js';
+import { formatCurrency, formatCurrencySpeech, formatPercentage } from './utils.js';
 import { getChartTypography, fillTightParenVar } from '../chart-typography.js';
 
 /** Curriculum chart label convention: 13px / 600 / Lato at the 18px design root. */
@@ -598,9 +598,9 @@ function announceDataPoint(cashFlow, total, ytmBEY) {
   
   const announcement = `Time ${cashFlow.timeYears.toFixed(1)} years. ` +
     `Yield-to-maturity (r): ${ytmBEY ? formatPercentage(ytmBEY * 100) : '0%'}. ` +
-    `Coupon payment (PMT): ${formatCurrency(cashFlow.couponPayment, true)}. ` +
-    `${principalLabel}: ${formatCurrency(cashFlow.principalPayment, true)}. ` +
-    `Total: ${formatCurrency(total, true)}.`;
+    `Coupon payment (PMT): ${formatCurrencySpeech(cashFlow.couponPayment)}. ` +
+    `${principalLabel}: ${formatCurrencySpeech(cashFlow.principalPayment)}. ` +
+    `Total: ${formatCurrencySpeech(total)}.`;
   
   liveRegion.textContent = announcement;
 }

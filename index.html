@@ -24,12 +24,7 @@
       showProcessingMessages: false,
       messageStyle: "none",
       skipStartupTypeset: false,
-      
-      // Disable MathJax menu to prevent tabindex from being added
-      showMathMenu: false,
-      menuSettings: {
-        zoom: "None"
-      },
+      menuSettings: { explorer: true },
       
       // Process equations quickly to minimize layout shift
       "HTML-CSS": {
@@ -37,112 +32,6 @@
         minScaleAdjust: 50
       }
     });
-    
-    // Fix WCAG issue: aria-hidden elements should not be focusable
-    // Run after MathJax finishes rendering
-    MathJax.Hub.Queue(function () {
-      fixAllAriaHiddenElements();
-      
-      // Show all rendered equations (they start hidden via CSS)
-      const allMath = document.querySelectorAll('.equation-container math');
-      allMath.forEach(math => {
-        math.style.visibility = 'visible';
-      });
-    });
-    
-    function fixAllAriaHiddenElements() {
-      // Fix 1: Remove tabindex and overflow from MathJax presentation spans and all descendants
-      const presentationSpans = document.querySelectorAll('span.MathJax');
-      presentationSpans.forEach(span => {
-        // Remove tabindex to prevent keyboard focus issues
-        span.removeAttribute('tabindex');
-        // Force remove any inline overflow styles that MathJax might add
-        span.style.setProperty('overflow', 'visible', 'important');
-        span.style.setProperty('overflow-x', 'visible', 'important');
-        span.style.setProperty('overflow-y', 'visible', 'important');
-        span.style.setProperty('max-width', 'none', 'important');
-        
-        // Also fix all child elements that might have overflow
-        const childrenWithOverflow = span.querySelectorAll('*');
-        childrenWithOverflow.forEach(child => {
-          child.style.setProperty('overflow', 'visible', 'important');
-          child.style.setProperty('overflow-x', 'visible', 'important');
-          child.style.setProperty('overflow-y', 'visible', 'important');
-        });
-      });
-      
-      // Fix 2: Remove aria-label from aria-hidden elements (not allowed)
-      const ariaHiddenWithLabel = document.querySelectorAll('[aria-hidden="true"][aria-label]');
-      ariaHiddenWithLabel.forEach(element => {
-        element.removeAttribute('aria-label');
-      });
-      
-      // Fix 3: All other aria-hidden elements should not be focusable
-      const ariaHiddenElements = document.querySelectorAll('[aria-hidden="true"]');
-      ariaHiddenElements.forEach(element => {
-        // Only set tabindex if not already set to -1
-        if (element.getAttribute('tabindex') !== '-1') {
-          element.setAttribute('tabindex', '-1');
-        }
-        
-        // Also fix any focusable children
-        const focusableChildren = element.querySelectorAll('[tabindex="0"], a, button, input, select, textarea');
-        focusableChildren.forEach(child => {
-          child.setAttribute('tabindex', '-1');
-        });
-      });
-    }
-    
-    // Set up MutationObserver to catch MathJax elements as they're created/modified
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.addedNodes.length || mutation.attributeName === 'style' || mutation.attributeName === 'tabindex') {
-          const mathJaxElements = document.querySelectorAll('.MathJax');
-          mathJaxElements.forEach(function(el) {
-            // Remove tabindex for accessibility
-            el.removeAttribute('tabindex');
-            
-            // Fix overflow styles
-            el.style.setProperty('overflow', 'visible', 'important');
-            el.style.setProperty('overflow-x', 'visible', 'important');
-            el.style.setProperty('overflow-y', 'visible', 'important');
-            el.style.setProperty('max-width', 'none', 'important');
-            
-            const children = el.querySelectorAll('*');
-            children.forEach(child => {
-              child.style.setProperty('overflow', 'visible', 'important');
-              child.style.setProperty('overflow-x', 'visible', 'important');
-              child.style.setProperty('overflow-y', 'visible', 'important');
-            });
-          });
-        }
-      });
-    });
-    
-    // Wait for DOM to be ready before observing
-    document.addEventListener('DOMContentLoaded', function() {
-      // Start observing the document for MathJax changes
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['style', 'class', 'tabindex']
-      });
-    });
-    
-    // Periodic cleanup - aggressively remove tabindex every 500ms for the first 5 seconds
-    let cleanupCount = 0;
-    const cleanupInterval = setInterval(function() {
-      const mathJaxElements = document.querySelectorAll('.MathJax[tabindex]');
-      mathJaxElements.forEach(function(el) {
-        el.removeAttribute('tabindex');
-      });
-      
-      cleanupCount++;
-      if (cleanupCount >= 10) {
-        clearInterval(cleanupInterval);
-      }
-    }, 500);
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=MML_HTMLorMML"></script>
   <script>
@@ -262,7 +151,7 @@
         </p>
 
         <!-- Dynamic equation with actual values -->
-        <div class="equation-container" role="region" aria-label="Bond YTM calculation with your values" id="dynamic-equation-container" tabindex="0">
+        <div class="equation-container" role="region" aria-label="Bond YTM calculation with your values" id="dynamic-equation-container">
           <div id="dynamic-mathml-equation">
             <!-- Populated by JavaScript -->
           </div>
